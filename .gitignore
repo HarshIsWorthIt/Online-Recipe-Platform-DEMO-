@@ -1,0 +1,10 @@
+# Local database and SQLite working files
+data/*.db
+data/*.db-shm
+data/*.db-wal
+
+# Runtime and editor files
+node_modules/
+.env
+.DS_Store
+Thumbs.db

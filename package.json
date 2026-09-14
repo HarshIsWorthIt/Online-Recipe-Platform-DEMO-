@@ -1,0 +1,9 @@
+{
+  "name": "recipely-local",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A dependency-free local recipe sharing platform",
+  "scripts": {
+    "start": "node server.js"
+  }
+}

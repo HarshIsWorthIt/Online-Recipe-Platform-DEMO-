@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#eb6841" />
+    <title>Recipely — Share what you love to cook</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="live-background" aria-hidden="true"><span class="background-orb orb-one"></span><span class="background-orb orb-two"></span><span class="background-orb orb-three"></span><i class="floating-seed seed-one"></i><i class="floating-seed seed-two"></i><i class="floating-seed seed-three"></i><i class="floating-seed seed-four"></i></div>
+    <header class="topbar">
+      <a class="brand" href="#home" aria-label="Recipely home"><span class="brand-mark">R</span><span>recipely</span></a>
+      <nav class="topnav" id="topnav"><a href="#discover">Discover</a><a href="#about">How it works</a></nav>
+      <div id="account-actions"></div>
+    </header>
+    <main id="app" tabindex="-1"></main>
+    <div id="toast-region" class="toast-region" aria-live="polite" aria-atomic="true"></div>
+    <div id="modal-root"></div>
+    <footer class="site-footer"><span>Made for local cooking communities.</span><span>© <span id="year"></span> Recipely</span></footer>
+    <script src="/app.js" defer></script>
+  </body>
+</html>
