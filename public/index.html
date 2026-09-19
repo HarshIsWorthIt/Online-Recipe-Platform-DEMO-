@@ -1,10 +1,10 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#eb6841" />
-    <title>Recipely — Share what you love to cook</title>
+    <title>Recipely — Recipe Stories</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
@@ -12,13 +12,1267 @@
   </head>
   <body>
     <a class="skip-link" href="#app">Skip to content</a>
-    <div class="live-background" aria-hidden="true"><span class="background-orb orb-one"></span><span class="background-orb orb-two"></span><span class="background-orb orb-three"></span><i class="floating-seed seed-one"></i><i class="floating-seed seed-two"></i><i class="floating-seed seed-three"></i><i class="floating-seed seed-four"></i></div>
+    <div class="live-background" aria-hidden="true">
+      <span class="background-orb orb-one"></span>
+      <span class="background-orb orb-two"></span>
+      <span class="background-orb orb-three"></span>
+      <i class="floating-seed seed-one"></i>
+      <i class="floating-seed seed-two"></i>
+      <i class="floating-seed seed-three"></i>
+      <i class="floating-seed seed-four"></i>
+    </div>
     <header class="topbar" role="banner">
       <a class="brand" href="#home" aria-label="Recipely home"><span class="brand-mark">R</span><span>recipely</span></a>
-      <nav class="topnav" id="topnav" aria-label="Primary navigation"><a href="#discover">Discover</a><a href="#about">How it works</a></nav>
+      <nav class="topnav" id="topnav" aria-label="Primary navigation">
+        <a href="#discover">Discover</a>
+        <a href="#journeys">Journeys</a>
+        <a href="#insights">Insights</a>
+        <a href="#how-it-works">How it works</a>
+      </nav>
       <div id="account-actions" aria-label="Account actions"></div>
     </header>
-    <main id="app" tabindex="-1"></main>
+    <main id="app" tabindex="-1">
+      <section class="hero section-shell">
+        <div class="hero-copy">
+          <span class="eyebrow">Curated home cooking</span>
+          <h1>Cook with clarity, joy, and <em>more flavour</em> every week.</h1>
+          <p>Recipely helps people discover recipes that feel personal, useful, and beautifully doable for everyday life.</p>
+          <div class="hero-actions">
+            <button class="button" type="button">Explore recipes</button>
+            <button class="button secondary" type="button">Save my favourites</button>
+          </div>
+        </div>
+        <div class="hero-art" aria-hidden="true">
+          <div class="art-chip">This week: 24 new recipes</div>
+          <img class="art-photo" src="https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=900&q=80" alt="Fresh cooking scene" />
+          <div class="art-card">
+            <strong>47 min</strong>
+            <span>Golden lemon chicken skillet</span>
+          </div>
+        </div>
+      </section>
+      <section class="value-strip section-shell" aria-label="Highlights">
+        <article class="value-card"><div class="value-icon">✦</div><div><strong>Ingredient-led inspiration</strong><span>Recipes built around what is in season and easy to shop for.</span></div></article>
+        <article class="value-card"><div class="value-icon">☼</div><div><strong>Real routines</strong><span>Weeknight plans that feel simple, balanced, and stress-free.</span></div></article>
+        <article class="value-card"><div class="value-icon">♥</div><div><strong>Shared joy</strong><span>Save your favourites, rate recipes, and keep every kitchen story close.</span></div></article>
+      </section>
+      <section class="section-shell discover" id="discover">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">Trending now</span>
+            <h2 class="section-title">Fresh ideas from home cooks everywhere</h2>
+          </div>
+          <button class="button secondary" type="button">See more</button>
+        </div>
+        <div class="search-panel">
+          <label class="field"><span class="sr-only">Search</span><input type="text" placeholder="Search recipe, ingredient, cuisine" /></label>
+          <label class="field"><span class="sr-only">Meal type</span><select><option>Meal type</option><option>Dinner</option><option>Lunch</option><option>Breakfast</option><option>Dessert</option></select></label>
+          <label class="field"><span class="sr-only">Budget</span><select><option>Budget</option><option>Easy</option><option>Comfort</option><option>Luxury</option></select></label>
+          <label class="field"><span class="sr-only">Time</span><select><option>Time</option><option>Under 20 min</option><option>20–35 min</option><option>35–50 min</option></select></label>
+          <button class="button" type="button">Filter</button>
+        </div>
+        <div class="recipe-grid">
+          <article class="recipe-card">
+            <div class="recipe-image" aria-hidden="true"><span class="save-card"><button class="icon-button" type="button">♡</button></span></div>
+            <div class="recipe-card-body">
+              <div class="card-context">
+                <span class="tag">Dinner</span>
+                <span class="origin-tag">Mediterranean</span>
+              </div>
+              <h3>Recipe feature 1</h3>
+              <p>Beautiful textures, nutritious comfort, and vibrant flavour built for real kitchens.</p>
+              <div class="meta-row"><span>25 min · 2 serves</span><span class="rating">★ 4.$($i % 10)</span></div>
+            </div>
+          </article>
+          <article class="recipe-card">
+            <div class="recipe-image" aria-hidden="true"><span class="save-card"><button class="icon-button" type="button">♡</button></span></div>
+            <div class="recipe-card-body">
+              <div class="card-context">
+                <span class="tag">Dinner</span>
+                <span class="origin-tag">Mediterranean</span>
+              </div>
+              <h3>Recipe feature 2</h3>
+              <p>Beautiful textures, nutritious comfort, and vibrant flavour built for real kitchens.</p>
+              <div class="meta-row"><span>25 min · 2 serves</span><span class="rating">★ 4.$($i % 10)</span></div>
+            </div>
+          </article>
+          <article class="recipe-card">
+            <div class="recipe-image" aria-hidden="true"><span class="save-card"><button class="icon-button" type="button">♡</button></span></div>
+            <div class="recipe-card-body">
+              <div class="card-context">
+                <span class="tag">Dinner</span>
+                <span class="origin-tag">Mediterranean</span>
+              </div>
+              <h3>Recipe feature 3</h3>
+              <p>Beautiful textures, nutritious comfort, and vibrant flavour built for real kitchens.</p>
+              <div class="meta-row"><span>25 min · 2 serves</span><span class="rating">★ 4.$($i % 10)</span></div>
+            </div>
+          </article>
+          <article class="recipe-card">
+            <div class="recipe-image" aria-hidden="true"><span class="save-card"><button class="icon-button" type="button">♡</button></span></div>
+            <div class="recipe-card-body">
+              <div class="card-context">
+                <span class="tag">Dinner</span>
+                <span class="origin-tag">Mediterranean</span>
+              </div>
+              <h3>Recipe feature 4</h3>
+              <p>Beautiful textures, nutritious comfort, and vibrant flavour built for real kitchens.</p>
+              <div class="meta-row"><span>25 min · 2 serves</span><span class="rating">★ 4.$($i % 10)</span></div>
+            </div>
+          </article>
+          <article class="recipe-card">
+            <div class="recipe-image" aria-hidden="true"><span class="save-card"><button class="icon-button" type="button">♡</button></span></div>
+            <div class="recipe-card-body">
+              <div class="card-context">
+                <span class="tag">Dinner</span>
+                <span class="origin-tag">Mediterranean</span>
+              </div>
+              <h3>Recipe feature 5</h3>
+              <p>Beautiful textures, nutritious comfort, and vibrant flavour built for real kitchens.</p>
+              <div class="meta-row"><span>25 min · 2 serves</span><span class="rating">★ 4.$($i % 10)</span></div>
+            </div>
+          </article>
+          <article class="recipe-card">
+            <div class="recipe-image" aria-hidden="true"><span class="save-card"><button class="icon-button" type="button">♡</button></span></div>
+            <div class="recipe-card-body">
+              <div class="card-context">
+                <span class="tag">Dinner</span>
+                <span class="origin-tag">Mediterranean</span>
+              </div>
+              <h3>Recipe feature 6</h3>
+              <p>Beautiful textures, nutritious comfort, and vibrant flavour built for real kitchens.</p>
+              <div class="meta-row"><span>25 min · 2 serves</span><span class="rating">★ 4.$($i % 10)</span></div>
+            </div>
+          </article>
+          <article class="recipe-card">
+            <div class="recipe-image" aria-hidden="true"><span class="save-card"><button class="icon-button" type="button">♡</button></span></div>
+            <div class="recipe-card-body">
+              <div class="card-context">
+                <span class="tag">Dinner</span>
+                <span class="origin-tag">Mediterranean</span>
+              </div>
+              <h3>Recipe feature 7</h3>
+              <p>Beautiful textures, nutritious comfort, and vibrant flavour built for real kitchens.</p>
+              <div class="meta-row"><span>25 min · 2 serves</span><span class="rating">★ 4.$($i % 10)</span></div>
+            </div>
+          </article>
+          <article class="recipe-card">
+            <div class="recipe-image" aria-hidden="true"><span class="save-card"><button class="icon-button" type="button">♡</button></span></div>
+            <div class="recipe-card-body">
+              <div class="card-context">
+                <span class="tag">Dinner</span>
+                <span class="origin-tag">Mediterranean</span>
+              </div>
+              <h3>Recipe feature 8</h3>
+              <p>Beautiful textures, nutritious comfort, and vibrant flavour built for real kitchens.</p>
+              <div class="meta-row"><span>25 min · 2 serves</span><span class="rating">★ 4.$($i % 10)</span></div>
+            </div>
+          </article>
+          <article class="recipe-card">
+            <div class="recipe-image" aria-hidden="true"><span class="save-card"><button class="icon-button" type="button">♡</button></span></div>
+            <div class="recipe-card-body">
+              <div class="card-context">
+                <span class="tag">Dinner</span>
+                <span class="origin-tag">Mediterranean</span>
+              </div>
+              <h3>Recipe feature 9</h3>
+              <p>Beautiful textures, nutritious comfort, and vibrant flavour built for real kitchens.</p>
+              <div class="meta-row"><span>25 min · 2 serves</span><span class="rating">★ 4.$($i % 10)</span></div>
+            </div>
+          </article>
+          <article class="recipe-card">
+            <div class="recipe-image" aria-hidden="true"><span class="save-card"><button class="icon-button" type="button">♡</button></span></div>
+            <div class="recipe-card-body">
+              <div class="card-context">
+                <span class="tag">Dinner</span>
+                <span class="origin-tag">Mediterranean</span>
+              </div>
+              <h3>Recipe feature 10</h3>
+              <p>Beautiful textures, nutritious comfort, and vibrant flavour built for real kitchens.</p>
+              <div class="meta-row"><span>25 min · 2 serves</span><span class="rating">★ 4.$($i % 10)</span></div>
+            </div>
+          </article>
+          <article class="recipe-card">
+            <div class="recipe-image" aria-hidden="true"><span class="save-card"><button class="icon-button" type="button">♡</button></span></div>
+            <div class="recipe-card-body">
+              <div class="card-context">
+                <span class="tag">Dinner</span>
+                <span class="origin-tag">Mediterranean</span>
+              </div>
+              <h3>Recipe feature 11</h3>
+              <p>Beautiful textures, nutritious comfort, and vibrant flavour built for real kitchens.</p>
+              <div class="meta-row"><span>25 min · 2 serves</span><span class="rating">★ 4.$($i % 10)</span></div>
+            </div>
+          </article>
+          <article class="recipe-card">
+            <div class="recipe-image" aria-hidden="true"><span class="save-card"><button class="icon-button" type="button">♡</button></span></div>
+            <div class="recipe-card-body">
+              <div class="card-context">
+                <span class="tag">Dinner</span>
+                <span class="origin-tag">Mediterranean</span>
+              </div>
+              <h3>Recipe feature 12</h3>
+              <p>Beautiful textures, nutritious comfort, and vibrant flavour built for real kitchens.</p>
+              <div class="meta-row"><span>25 min · 2 serves</span><span class="rating">★ 4.$($i % 10)</span></div>
+            </div>
+          </article>
+        </div>
+      </section>
+      <section class="section-shell how" id="how-it-works">
+        <div>
+          <span class="eyebrow">How it works</span>
+          <h2 class="section-title">A calmer way to plan meals and cook with confidence.</h2>
+          <p>Each recipe is structured for real life: manageable ingredients, practical prep steps, and ideas you can actually repeat.</p>
+        </div>
+        <div class="step-list">
+            <div>
+              <strong>Step  title</strong>
+              <span>Thoughtful kitchen flow, ingredient pairing, and low-stress prep that feels natural from the start.</span>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="section-shell" id="journeys">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">Kitchen journeys</span>
+            <h2 class="section-title">A weekly rhythm built around real people</h2>
+          </div>
+          <button class="button secondary" type="button">View journal</button>
+        </div>
+        <div class="recipe-grid">
+          <article class="recipe-card">
+            <div class="recipe-image" aria-hidden="true"></div>
+            <div class="recipe-card-body">
+              <div class="card-context">
+                <span class="tag">Editor pick</span>
+                <span class="flavour-tag">Comfort</span>
+              </div>
+              <h3>Kitchen story 1</h3>
+              <p>Slow, satisfying, and crowd-ready ideas shaped by everyday habits and rich seasonal flavour.</p>
+              <div class="meta-row"><span>2.1k saves</span><span class="rating">★ 4.8</span></div>
+            </div>
+          </article>
+          <article class="recipe-card">
+            <div class="recipe-image" aria-hidden="true"></div>
+            <div class="recipe-card-body">
+              <div class="card-context">
+                <span class="tag">Editor pick</span>
+                <span class="flavour-tag">Comfort</span>
+              </div>
+              <h3>Kitchen story 2</h3>
+              <p>Slow, satisfying, and crowd-ready ideas shaped by everyday habits and rich seasonal flavour.</p>
+              <div class="meta-row"><span>2.1k saves</span><span class="rating">★ 4.8</span></div>
+            </div>
+          </article>
+          <article class="recipe-card">
+            <div class="recipe-image" aria-hidden="true"></div>
+            <div class="recipe-card-body">
+              <div class="card-context">
+                <span class="tag">Editor pick</span>
+                <span class="flavour-tag">Comfort</span>
+              </div>
+              <h3>Kitchen story 3</h3>
+              <p>Slow, satisfying, and crowd-ready ideas shaped by everyday habits and rich seasonal flavour.</p>
+              <div class="meta-row"><span>2.1k saves</span><span class="rating">★ 4.8</span></div>
+            </div>
+          </article>
+          <article class="recipe-card">
+            <div class="recipe-image" aria-hidden="true"></div>
+            <div class="recipe-card-body">
+              <div class="card-context">
+                <span class="tag">Editor pick</span>
+                <span class="flavour-tag">Comfort</span>
+              </div>
+              <h3>Kitchen story 4</h3>
+              <p>Slow, satisfying, and crowd-ready ideas shaped by everyday habits and rich seasonal flavour.</p>
+              <div class="meta-row"><span>2.1k saves</span><span class="rating">★ 4.8</span></div>
+            </div>
+          </article>
+          <article class="recipe-card">
+            <div class="recipe-image" aria-hidden="true"></div>
+            <div class="recipe-card-body">
+              <div class="card-context">
+                <span class="tag">Editor pick</span>
+                <span class="flavour-tag">Comfort</span>
+              </div>
+              <h3>Kitchen story 5</h3>
+              <p>Slow, satisfying, and crowd-ready ideas shaped by everyday habits and rich seasonal flavour.</p>
+              <div class="meta-row"><span>2.1k saves</span><span class="rating">★ 4.8</span></div>
+            </div>
+          </article>
+          <article class="recipe-card">
+            <div class="recipe-image" aria-hidden="true"></div>
+            <div class="recipe-card-body">
+              <div class="card-context">
+                <span class="tag">Editor pick</span>
+                <span class="flavour-tag">Comfort</span>
+              </div>
+              <h3>Kitchen story 6</h3>
+              <p>Slow, satisfying, and crowd-ready ideas shaped by everyday habits and rich seasonal flavour.</p>
+              <div class="meta-row"><span>2.1k saves</span><span class="rating">★ 4.8</span></div>
+            </div>
+          </article>
+        </div>
+      </section>
+      <section class="section-shell" id="insights">
+        <div class="ui-panel">
+          <span class="eyebrow">Insight block 1</span>
+          <h3>Recipe note 1</h3>
+          <p>Layered flavour, thoughtful timing, and a more intuitive flow in the kitchen can make weeknight cooking feel less like a chore and more like a ritual.</p>
+          <div class="mini-meta"><span>Prep</span><span>Timing</span><span>Serve</span></div>
+        </div>
+        <div class="ui-panel">
+          <span class="eyebrow">Insight block 2</span>
+          <h3>Recipe note 2</h3>
+          <p>Layered flavour, thoughtful timing, and a more intuitive flow in the kitchen can make weeknight cooking feel less like a chore and more like a ritual.</p>
+          <div class="mini-meta"><span>Prep</span><span>Timing</span><span>Serve</span></div>
+        </div>
+        <div class="ui-panel">
+          <span class="eyebrow">Insight block 3</span>
+          <h3>Recipe note 3</h3>
+          <p>Layered flavour, thoughtful timing, and a more intuitive flow in the kitchen can make weeknight cooking feel less like a chore and more like a ritual.</p>
+          <div class="mini-meta"><span>Prep</span><span>Timing</span><span>Serve</span></div>
+        </div>
+        <div class="ui-panel">
+          <span class="eyebrow">Insight block 4</span>
+          <h3>Recipe note 4</h3>
+          <p>Layered flavour, thoughtful timing, and a more intuitive flow in the kitchen can make weeknight cooking feel less like a chore and more like a ritual.</p>
+          <div class="mini-meta"><span>Prep</span><span>Timing</span><span>Serve</span></div>
+        </div>
+        <div class="ui-panel">
+          <span class="eyebrow">Insight block 5</span>
+          <h3>Recipe note 5</h3>
+          <p>Layered flavour, thoughtful timing, and a more intuitive flow in the kitchen can make weeknight cooking feel less like a chore and more like a ritual.</p>
+          <div class="mini-meta"><span>Prep</span><span>Timing</span><span>Serve</span></div>
+        </div>
+        <div class="ui-panel">
+          <span class="eyebrow">Insight block 6</span>
+          <h3>Recipe note 6</h3>
+          <p>Layered flavour, thoughtful timing, and a more intuitive flow in the kitchen can make weeknight cooking feel less like a chore and more like a ritual.</p>
+          <div class="mini-meta"><span>Prep</span><span>Timing</span><span>Serve</span></div>
+        </div>
+        <div class="ui-panel">
+          <span class="eyebrow">Insight block 7</span>
+          <h3>Recipe note 7</h3>
+          <p>Layered flavour, thoughtful timing, and a more intuitive flow in the kitchen can make weeknight cooking feel less like a chore and more like a ritual.</p>
+          <div class="mini-meta"><span>Prep</span><span>Timing</span><span>Serve</span></div>
+        </div>
+        <div class="ui-panel">
+          <span class="eyebrow">Insight block 8</span>
+          <h3>Recipe note 8</h3>
+          <p>Layered flavour, thoughtful timing, and a more intuitive flow in the kitchen can make weeknight cooking feel less like a chore and more like a ritual.</p>
+          <div class="mini-meta"><span>Prep</span><span>Timing</span><span>Serve</span></div>
+        </div>
+        <div class="ui-panel">
+          <span class="eyebrow">Insight block 9</span>
+          <h3>Recipe note 9</h3>
+          <p>Layered flavour, thoughtful timing, and a more intuitive flow in the kitchen can make weeknight cooking feel less like a chore and more like a ritual.</p>
+          <div class="mini-meta"><span>Prep</span><span>Timing</span><span>Serve</span></div>
+        </div>
+        <div class="ui-panel">
+          <span class="eyebrow">Insight block 10</span>
+          <h3>Recipe note 10</h3>
+          <p>Layered flavour, thoughtful timing, and a more intuitive flow in the kitchen can make weeknight cooking feel less like a chore and more like a ritual.</p>
+          <div class="mini-meta"><span>Prep</span><span>Timing</span><span>Serve</span></div>
+        </div>
+        <div class="ui-panel">
+          <span class="eyebrow">Insight block 11</span>
+          <h3>Recipe note 11</h3>
+          <p>Layered flavour, thoughtful timing, and a more intuitive flow in the kitchen can make weeknight cooking feel less like a chore and more like a ritual.</p>
+          <div class="mini-meta"><span>Prep</span><span>Timing</span><span>Serve</span></div>
+        </div>
+        <div class="ui-panel">
+          <span class="eyebrow">Insight block 12</span>
+          <h3>Recipe note 12</h3>
+          <p>Layered flavour, thoughtful timing, and a more intuitive flow in the kitchen can make weeknight cooking feel less like a chore and more like a ritual.</p>
+          <div class="mini-meta"><span>Prep</span><span>Timing</span><span>Serve</span></div>
+        </div>
+        <div class="ui-panel">
+          <span class="eyebrow">Insight block 13</span>
+          <h3>Recipe note 13</h3>
+          <p>Layered flavour, thoughtful timing, and a more intuitive flow in the kitchen can make weeknight cooking feel less like a chore and more like a ritual.</p>
+          <div class="mini-meta"><span>Prep</span><span>Timing</span><span>Serve</span></div>
+        </div>
+        <div class="ui-panel">
+          <span class="eyebrow">Insight block 14</span>
+          <h3>Recipe note 14</h3>
+          <p>Layered flavour, thoughtful timing, and a more intuitive flow in the kitchen can make weeknight cooking feel less like a chore and more like a ritual.</p>
+          <div class="mini-meta"><span>Prep</span><span>Timing</span><span>Serve</span></div>
+        </div>
+        <div class="ui-panel">
+          <span class="eyebrow">Insight block 15</span>
+          <h3>Recipe note 15</h3>
+          <p>Layered flavour, thoughtful timing, and a more intuitive flow in the kitchen can make weeknight cooking feel less like a chore and more like a ritual.</p>
+          <div class="mini-meta"><span>Prep</span><span>Timing</span><span>Serve</span></div>
+        </div>
+        <div class="ui-panel">
+          <span class="eyebrow">Insight block 16</span>
+          <h3>Recipe note 16</h3>
+          <p>Layered flavour, thoughtful timing, and a more intuitive flow in the kitchen can make weeknight cooking feel less like a chore and more like a ritual.</p>
+          <div class="mini-meta"><span>Prep</span><span>Timing</span><span>Serve</span></div>
+        </div>
+        <div class="ui-panel">
+          <span class="eyebrow">Insight block 17</span>
+          <h3>Recipe note 17</h3>
+          <p>Layered flavour, thoughtful timing, and a more intuitive flow in the kitchen can make weeknight cooking feel less like a chore and more like a ritual.</p>
+          <div class="mini-meta"><span>Prep</span><span>Timing</span><span>Serve</span></div>
+        </div>
+        <div class="ui-panel">
+          <span class="eyebrow">Insight block 18</span>
+          <h3>Recipe note 18</h3>
+          <p>Layered flavour, thoughtful timing, and a more intuitive flow in the kitchen can make weeknight cooking feel less like a chore and more like a ritual.</p>
+          <div class="mini-meta"><span>Prep</span><span>Timing</span><span>Serve</span></div>
+        </div>
+        <div class="ui-panel">
+          <span class="eyebrow">Insight block 19</span>
+          <h3>Recipe note 19</h3>
+          <p>Layered flavour, thoughtful timing, and a more intuitive flow in the kitchen can make weeknight cooking feel less like a chore and more like a ritual.</p>
+          <div class="mini-meta"><span>Prep</span><span>Timing</span><span>Serve</span></div>
+        </div>
+        <div class="ui-panel">
+          <span class="eyebrow">Insight block 20</span>
+          <h3>Recipe note 20</h3>
+          <p>Layered flavour, thoughtful timing, and a more intuitive flow in the kitchen can make weeknight cooking feel less like a chore and more like a ritual.</p>
+          <div class="mini-meta"><span>Prep</span><span>Timing</span><span>Serve</span></div>
+        </div>
+        <div class="ui-panel">
+          <span class="eyebrow">Insight block 21</span>
+          <h3>Recipe note 21</h3>
+          <p>Layered flavour, thoughtful timing, and a more intuitive flow in the kitchen can make weeknight cooking feel less like a chore and more like a ritual.</p>
+          <div class="mini-meta"><span>Prep</span><span>Timing</span><span>Serve</span></div>
+        </div>
+        <div class="ui-panel">
+          <span class="eyebrow">Insight block 22</span>
+          <h3>Recipe note 22</h3>
+          <p>Layered flavour, thoughtful timing, and a more intuitive flow in the kitchen can make weeknight cooking feel less like a chore and more like a ritual.</p>
+          <div class="mini-meta"><span>Prep</span><span>Timing</span><span>Serve</span></div>
+        </div>
+        <div class="ui-panel">
+          <span class="eyebrow">Insight block 23</span>
+          <h3>Recipe note 23</h3>
+          <p>Layered flavour, thoughtful timing, and a more intuitive flow in the kitchen can make weeknight cooking feel less like a chore and more like a ritual.</p>
+          <div class="mini-meta"><span>Prep</span><span>Timing</span><span>Serve</span></div>
+        </div>
+        <div class="ui-panel">
+          <span class="eyebrow">Insight block 24</span>
+          <h3>Recipe note 24</h3>
+          <p>Layered flavour, thoughtful timing, and a more intuitive flow in the kitchen can make weeknight cooking feel less like a chore and more like a ritual.</p>
+          <div class="mini-meta"><span>Prep</span><span>Timing</span><span>Serve</span></div>
+        </div>
+        <div class="ui-panel">
+          <span class="eyebrow">Insight block 25</span>
+          <h3>Recipe note 25</h3>
+          <p>Layered flavour, thoughtful timing, and a more intuitive flow in the kitchen can make weeknight cooking feel less like a chore and more like a ritual.</p>
+          <div class="mini-meta"><span>Prep</span><span>Timing</span><span>Serve</span></div>
+        </div>
+        <div class="ui-panel">
+          <span class="eyebrow">Insight block 26</span>
+          <h3>Recipe note 26</h3>
+          <p>Layered flavour, thoughtful timing, and a more intuitive flow in the kitchen can make weeknight cooking feel less like a chore and more like a ritual.</p>
+          <div class="mini-meta"><span>Prep</span><span>Timing</span><span>Serve</span></div>
+        </div>
+        <div class="ui-panel">
+          <span class="eyebrow">Insight block 27</span>
+          <h3>Recipe note 27</h3>
+          <p>Layered flavour, thoughtful timing, and a more intuitive flow in the kitchen can make weeknight cooking feel less like a chore and more like a ritual.</p>
+          <div class="mini-meta"><span>Prep</span><span>Timing</span><span>Serve</span></div>
+        </div>
+        <div class="ui-panel">
+          <span class="eyebrow">Insight block 28</span>
+          <h3>Recipe note 28</h3>
+          <p>Layered flavour, thoughtful timing, and a more intuitive flow in the kitchen can make weeknight cooking feel less like a chore and more like a ritual.</p>
+          <div class="mini-meta"><span>Prep</span><span>Timing</span><span>Serve</span></div>
+        </div>
+        <div class="ui-panel">
+          <span class="eyebrow">Insight block 29</span>
+          <h3>Recipe note 29</h3>
+          <p>Layered flavour, thoughtful timing, and a more intuitive flow in the kitchen can make weeknight cooking feel less like a chore and more like a ritual.</p>
+          <div class="mini-meta"><span>Prep</span><span>Timing</span><span>Serve</span></div>
+        </div>
+        <div class="ui-panel">
+          <span class="eyebrow">Insight block 30</span>
+          <h3>Recipe note 30</h3>
+          <p>Layered flavour, thoughtful timing, and a more intuitive flow in the kitchen can make weeknight cooking feel less like a chore and more like a ritual.</p>
+          <div class="mini-meta"><span>Prep</span><span>Timing</span><span>Serve</span></div>
+        </div>
+        <div class="ui-panel">
+          <span class="eyebrow">Insight block 31</span>
+          <h3>Recipe note 31</h3>
+          <p>Layered flavour, thoughtful timing, and a more intuitive flow in the kitchen can make weeknight cooking feel less like a chore and more like a ritual.</p>
+          <div class="mini-meta"><span>Prep</span><span>Timing</span><span>Serve</span></div>
+        </div>
+        <div class="ui-panel">
+          <span class="eyebrow">Insight block 32</span>
+          <h3>Recipe note 32</h3>
+          <p>Layered flavour, thoughtful timing, and a more intuitive flow in the kitchen can make weeknight cooking feel less like a chore and more like a ritual.</p>
+          <div class="mini-meta"><span>Prep</span><span>Timing</span><span>Serve</span></div>
+        </div>
+        <div class="ui-panel">
+          <span class="eyebrow">Insight block 33</span>
+          <h3>Recipe note 33</h3>
+          <p>Layered flavour, thoughtful timing, and a more intuitive flow in the kitchen can make weeknight cooking feel less like a chore and more like a ritual.</p>
+          <div class="mini-meta"><span>Prep</span><span>Timing</span><span>Serve</span></div>
+        </div>
+        <div class="ui-panel">
+          <span class="eyebrow">Insight block 34</span>
+          <h3>Recipe note 34</h3>
+          <p>Layered flavour, thoughtful timing, and a more intuitive flow in the kitchen can make weeknight cooking feel less like a chore and more like a ritual.</p>
+          <div class="mini-meta"><span>Prep</span><span>Timing</span><span>Serve</span></div>
+        </div>
+        <div class="ui-panel">
+          <span class="eyebrow">Insight block 35</span>
+          <h3>Recipe note 35</h3>
+          <p>Layered flavour, thoughtful timing, and a more intuitive flow in the kitchen can make weeknight cooking feel less like a chore and more like a ritual.</p>
+          <div class="mini-meta"><span>Prep</span><span>Timing</span><span>Serve</span></div>
+        </div>
+        <div class="ui-panel">
+          <span class="eyebrow">Insight block 36</span>
+          <h3>Recipe note 36</h3>
+          <p>Layered flavour, thoughtful timing, and a more intuitive flow in the kitchen can make weeknight cooking feel less like a chore and more like a ritual.</p>
+          <div class="mini-meta"><span>Prep</span><span>Timing</span><span>Serve</span></div>
+        </div>
+        <div class="ui-panel">
+          <span class="eyebrow">Insight block 37</span>
+          <h3>Recipe note 37</h3>
+          <p>Layered flavour, thoughtful timing, and a more intuitive flow in the kitchen can make weeknight cooking feel less like a chore and more like a ritual.</p>
+          <div class="mini-meta"><span>Prep</span><span>Timing</span><span>Serve</span></div>
+        </div>
+        <div class="ui-panel">
+          <span class="eyebrow">Insight block 38</span>
+          <h3>Recipe note 38</h3>
+          <p>Layered flavour, thoughtful timing, and a more intuitive flow in the kitchen can make weeknight cooking feel less like a chore and more like a ritual.</p>
+          <div class="mini-meta"><span>Prep</span><span>Timing</span><span>Serve</span></div>
+        </div>
+        <div class="ui-panel">
+          <span class="eyebrow">Insight block 39</span>
+          <h3>Recipe note 39</h3>
+          <p>Layered flavour, thoughtful timing, and a more intuitive flow in the kitchen can make weeknight cooking feel less like a chore and more like a ritual.</p>
+          <div class="mini-meta"><span>Prep</span><span>Timing</span><span>Serve</span></div>
+        </div>
+        <div class="ui-panel">
+          <span class="eyebrow">Insight block 40</span>
+          <h3>Recipe note 40</h3>
+          <p>Layered flavour, thoughtful timing, and a more intuitive flow in the kitchen can make weeknight cooking feel less like a chore and more like a ritual.</p>
+          <div class="mini-meta"><span>Prep</span><span>Timing</span><span>Serve</span></div>
+        </div>
+      </section>
+      <section class="dense-section">
+        <div class="eyebrow">Expanded block 1</div>
+        <h3>More content section 1</h3>
+        <p>Fresh ideas, better kitchen rhythm, and more confidence with recipes that are practical to cook, simple to share, and rich in flavour.</p>
+        <ul>
+          <li>List item 1 for the 1 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 2 for the 1 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 3 for the 1 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 4 for the 1 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 5 for the 1 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 6 for the 1 collection with thoughtful notes about texture, aroma, and timing.</li>
+        </ul>
+      </section>
+      <section class="dense-section">
+        <div class="eyebrow">Expanded block 2</div>
+        <h3>More content section 2</h3>
+        <p>Fresh ideas, better kitchen rhythm, and more confidence with recipes that are practical to cook, simple to share, and rich in flavour.</p>
+        <ul>
+          <li>List item 1 for the 2 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 2 for the 2 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 3 for the 2 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 4 for the 2 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 5 for the 2 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 6 for the 2 collection with thoughtful notes about texture, aroma, and timing.</li>
+        </ul>
+      </section>
+      <section class="dense-section">
+        <div class="eyebrow">Expanded block 3</div>
+        <h3>More content section 3</h3>
+        <p>Fresh ideas, better kitchen rhythm, and more confidence with recipes that are practical to cook, simple to share, and rich in flavour.</p>
+        <ul>
+          <li>List item 1 for the 3 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 2 for the 3 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 3 for the 3 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 4 for the 3 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 5 for the 3 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 6 for the 3 collection with thoughtful notes about texture, aroma, and timing.</li>
+        </ul>
+      </section>
+      <section class="dense-section">
+        <div class="eyebrow">Expanded block 4</div>
+        <h3>More content section 4</h3>
+        <p>Fresh ideas, better kitchen rhythm, and more confidence with recipes that are practical to cook, simple to share, and rich in flavour.</p>
+        <ul>
+          <li>List item 1 for the 4 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 2 for the 4 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 3 for the 4 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 4 for the 4 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 5 for the 4 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 6 for the 4 collection with thoughtful notes about texture, aroma, and timing.</li>
+        </ul>
+      </section>
+      <section class="dense-section">
+        <div class="eyebrow">Expanded block 5</div>
+        <h3>More content section 5</h3>
+        <p>Fresh ideas, better kitchen rhythm, and more confidence with recipes that are practical to cook, simple to share, and rich in flavour.</p>
+        <ul>
+          <li>List item 1 for the 5 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 2 for the 5 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 3 for the 5 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 4 for the 5 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 5 for the 5 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 6 for the 5 collection with thoughtful notes about texture, aroma, and timing.</li>
+        </ul>
+      </section>
+      <section class="dense-section">
+        <div class="eyebrow">Expanded block 6</div>
+        <h3>More content section 6</h3>
+        <p>Fresh ideas, better kitchen rhythm, and more confidence with recipes that are practical to cook, simple to share, and rich in flavour.</p>
+        <ul>
+          <li>List item 1 for the 6 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 2 for the 6 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 3 for the 6 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 4 for the 6 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 5 for the 6 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 6 for the 6 collection with thoughtful notes about texture, aroma, and timing.</li>
+        </ul>
+      </section>
+      <section class="dense-section">
+        <div class="eyebrow">Expanded block 7</div>
+        <h3>More content section 7</h3>
+        <p>Fresh ideas, better kitchen rhythm, and more confidence with recipes that are practical to cook, simple to share, and rich in flavour.</p>
+        <ul>
+          <li>List item 1 for the 7 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 2 for the 7 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 3 for the 7 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 4 for the 7 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 5 for the 7 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 6 for the 7 collection with thoughtful notes about texture, aroma, and timing.</li>
+        </ul>
+      </section>
+      <section class="dense-section">
+        <div class="eyebrow">Expanded block 8</div>
+        <h3>More content section 8</h3>
+        <p>Fresh ideas, better kitchen rhythm, and more confidence with recipes that are practical to cook, simple to share, and rich in flavour.</p>
+        <ul>
+          <li>List item 1 for the 8 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 2 for the 8 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 3 for the 8 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 4 for the 8 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 5 for the 8 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 6 for the 8 collection with thoughtful notes about texture, aroma, and timing.</li>
+        </ul>
+      </section>
+      <section class="dense-section">
+        <div class="eyebrow">Expanded block 9</div>
+        <h3>More content section 9</h3>
+        <p>Fresh ideas, better kitchen rhythm, and more confidence with recipes that are practical to cook, simple to share, and rich in flavour.</p>
+        <ul>
+          <li>List item 1 for the 9 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 2 for the 9 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 3 for the 9 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 4 for the 9 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 5 for the 9 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 6 for the 9 collection with thoughtful notes about texture, aroma, and timing.</li>
+        </ul>
+      </section>
+      <section class="dense-section">
+        <div class="eyebrow">Expanded block 10</div>
+        <h3>More content section 10</h3>
+        <p>Fresh ideas, better kitchen rhythm, and more confidence with recipes that are practical to cook, simple to share, and rich in flavour.</p>
+        <ul>
+          <li>List item 1 for the 10 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 2 for the 10 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 3 for the 10 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 4 for the 10 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 5 for the 10 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 6 for the 10 collection with thoughtful notes about texture, aroma, and timing.</li>
+        </ul>
+      </section>
+      <section class="dense-section">
+        <div class="eyebrow">Expanded block 11</div>
+        <h3>More content section 11</h3>
+        <p>Fresh ideas, better kitchen rhythm, and more confidence with recipes that are practical to cook, simple to share, and rich in flavour.</p>
+        <ul>
+          <li>List item 1 for the 11 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 2 for the 11 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 3 for the 11 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 4 for the 11 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 5 for the 11 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 6 for the 11 collection with thoughtful notes about texture, aroma, and timing.</li>
+        </ul>
+      </section>
+      <section class="dense-section">
+        <div class="eyebrow">Expanded block 12</div>
+        <h3>More content section 12</h3>
+        <p>Fresh ideas, better kitchen rhythm, and more confidence with recipes that are practical to cook, simple to share, and rich in flavour.</p>
+        <ul>
+          <li>List item 1 for the 12 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 2 for the 12 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 3 for the 12 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 4 for the 12 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 5 for the 12 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 6 for the 12 collection with thoughtful notes about texture, aroma, and timing.</li>
+        </ul>
+      </section>
+      <section class="dense-section">
+        <div class="eyebrow">Expanded block 13</div>
+        <h3>More content section 13</h3>
+        <p>Fresh ideas, better kitchen rhythm, and more confidence with recipes that are practical to cook, simple to share, and rich in flavour.</p>
+        <ul>
+          <li>List item 1 for the 13 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 2 for the 13 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 3 for the 13 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 4 for the 13 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 5 for the 13 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 6 for the 13 collection with thoughtful notes about texture, aroma, and timing.</li>
+        </ul>
+      </section>
+      <section class="dense-section">
+        <div class="eyebrow">Expanded block 14</div>
+        <h3>More content section 14</h3>
+        <p>Fresh ideas, better kitchen rhythm, and more confidence with recipes that are practical to cook, simple to share, and rich in flavour.</p>
+        <ul>
+          <li>List item 1 for the 14 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 2 for the 14 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 3 for the 14 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 4 for the 14 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 5 for the 14 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 6 for the 14 collection with thoughtful notes about texture, aroma, and timing.</li>
+        </ul>
+      </section>
+      <section class="dense-section">
+        <div class="eyebrow">Expanded block 15</div>
+        <h3>More content section 15</h3>
+        <p>Fresh ideas, better kitchen rhythm, and more confidence with recipes that are practical to cook, simple to share, and rich in flavour.</p>
+        <ul>
+          <li>List item 1 for the 15 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 2 for the 15 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 3 for the 15 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 4 for the 15 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 5 for the 15 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 6 for the 15 collection with thoughtful notes about texture, aroma, and timing.</li>
+        </ul>
+      </section>
+      <section class="dense-section">
+        <div class="eyebrow">Expanded block 16</div>
+        <h3>More content section 16</h3>
+        <p>Fresh ideas, better kitchen rhythm, and more confidence with recipes that are practical to cook, simple to share, and rich in flavour.</p>
+        <ul>
+          <li>List item 1 for the 16 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 2 for the 16 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 3 for the 16 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 4 for the 16 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 5 for the 16 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 6 for the 16 collection with thoughtful notes about texture, aroma, and timing.</li>
+        </ul>
+      </section>
+      <section class="dense-section">
+        <div class="eyebrow">Expanded block 17</div>
+        <h3>More content section 17</h3>
+        <p>Fresh ideas, better kitchen rhythm, and more confidence with recipes that are practical to cook, simple to share, and rich in flavour.</p>
+        <ul>
+          <li>List item 1 for the 17 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 2 for the 17 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 3 for the 17 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 4 for the 17 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 5 for the 17 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 6 for the 17 collection with thoughtful notes about texture, aroma, and timing.</li>
+        </ul>
+      </section>
+      <section class="dense-section">
+        <div class="eyebrow">Expanded block 18</div>
+        <h3>More content section 18</h3>
+        <p>Fresh ideas, better kitchen rhythm, and more confidence with recipes that are practical to cook, simple to share, and rich in flavour.</p>
+        <ul>
+          <li>List item 1 for the 18 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 2 for the 18 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 3 for the 18 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 4 for the 18 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 5 for the 18 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 6 for the 18 collection with thoughtful notes about texture, aroma, and timing.</li>
+        </ul>
+      </section>
+      <section class="dense-section">
+        <div class="eyebrow">Expanded block 19</div>
+        <h3>More content section 19</h3>
+        <p>Fresh ideas, better kitchen rhythm, and more confidence with recipes that are practical to cook, simple to share, and rich in flavour.</p>
+        <ul>
+          <li>List item 1 for the 19 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 2 for the 19 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 3 for the 19 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 4 for the 19 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 5 for the 19 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 6 for the 19 collection with thoughtful notes about texture, aroma, and timing.</li>
+        </ul>
+      </section>
+      <section class="dense-section">
+        <div class="eyebrow">Expanded block 20</div>
+        <h3>More content section 20</h3>
+        <p>Fresh ideas, better kitchen rhythm, and more confidence with recipes that are practical to cook, simple to share, and rich in flavour.</p>
+        <ul>
+          <li>List item 1 for the 20 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 2 for the 20 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 3 for the 20 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 4 for the 20 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 5 for the 20 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 6 for the 20 collection with thoughtful notes about texture, aroma, and timing.</li>
+        </ul>
+      </section>
+      <section class="dense-section">
+        <div class="eyebrow">Expanded block 21</div>
+        <h3>More content section 21</h3>
+        <p>Fresh ideas, better kitchen rhythm, and more confidence with recipes that are practical to cook, simple to share, and rich in flavour.</p>
+        <ul>
+          <li>List item 1 for the 21 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 2 for the 21 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 3 for the 21 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 4 for the 21 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 5 for the 21 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 6 for the 21 collection with thoughtful notes about texture, aroma, and timing.</li>
+        </ul>
+      </section>
+      <section class="dense-section">
+        <div class="eyebrow">Expanded block 22</div>
+        <h3>More content section 22</h3>
+        <p>Fresh ideas, better kitchen rhythm, and more confidence with recipes that are practical to cook, simple to share, and rich in flavour.</p>
+        <ul>
+          <li>List item 1 for the 22 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 2 for the 22 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 3 for the 22 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 4 for the 22 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 5 for the 22 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 6 for the 22 collection with thoughtful notes about texture, aroma, and timing.</li>
+        </ul>
+      </section>
+      <section class="dense-section">
+        <div class="eyebrow">Expanded block 23</div>
+        <h3>More content section 23</h3>
+        <p>Fresh ideas, better kitchen rhythm, and more confidence with recipes that are practical to cook, simple to share, and rich in flavour.</p>
+        <ul>
+          <li>List item 1 for the 23 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 2 for the 23 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 3 for the 23 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 4 for the 23 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 5 for the 23 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 6 for the 23 collection with thoughtful notes about texture, aroma, and timing.</li>
+        </ul>
+      </section>
+      <section class="dense-section">
+        <div class="eyebrow">Expanded block 24</div>
+        <h3>More content section 24</h3>
+        <p>Fresh ideas, better kitchen rhythm, and more confidence with recipes that are practical to cook, simple to share, and rich in flavour.</p>
+        <ul>
+          <li>List item 1 for the 24 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 2 for the 24 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 3 for the 24 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 4 for the 24 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 5 for the 24 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 6 for the 24 collection with thoughtful notes about texture, aroma, and timing.</li>
+        </ul>
+      </section>
+      <section class="dense-section">
+        <div class="eyebrow">Expanded block 25</div>
+        <h3>More content section 25</h3>
+        <p>Fresh ideas, better kitchen rhythm, and more confidence with recipes that are practical to cook, simple to share, and rich in flavour.</p>
+        <ul>
+          <li>List item 1 for the 25 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 2 for the 25 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 3 for the 25 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 4 for the 25 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 5 for the 25 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 6 for the 25 collection with thoughtful notes about texture, aroma, and timing.</li>
+        </ul>
+      </section>
+      <section class="dense-section">
+        <div class="eyebrow">Expanded block 26</div>
+        <h3>More content section 26</h3>
+        <p>Fresh ideas, better kitchen rhythm, and more confidence with recipes that are practical to cook, simple to share, and rich in flavour.</p>
+        <ul>
+          <li>List item 1 for the 26 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 2 for the 26 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 3 for the 26 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 4 for the 26 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 5 for the 26 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 6 for the 26 collection with thoughtful notes about texture, aroma, and timing.</li>
+        </ul>
+      </section>
+      <section class="dense-section">
+        <div class="eyebrow">Expanded block 27</div>
+        <h3>More content section 27</h3>
+        <p>Fresh ideas, better kitchen rhythm, and more confidence with recipes that are practical to cook, simple to share, and rich in flavour.</p>
+        <ul>
+          <li>List item 1 for the 27 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 2 for the 27 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 3 for the 27 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 4 for the 27 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 5 for the 27 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 6 for the 27 collection with thoughtful notes about texture, aroma, and timing.</li>
+        </ul>
+      </section>
+      <section class="dense-section">
+        <div class="eyebrow">Expanded block 28</div>
+        <h3>More content section 28</h3>
+        <p>Fresh ideas, better kitchen rhythm, and more confidence with recipes that are practical to cook, simple to share, and rich in flavour.</p>
+        <ul>
+          <li>List item 1 for the 28 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 2 for the 28 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 3 for the 28 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 4 for the 28 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 5 for the 28 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 6 for the 28 collection with thoughtful notes about texture, aroma, and timing.</li>
+        </ul>
+      </section>
+      <section class="dense-section">
+        <div class="eyebrow">Expanded block 29</div>
+        <h3>More content section 29</h3>
+        <p>Fresh ideas, better kitchen rhythm, and more confidence with recipes that are practical to cook, simple to share, and rich in flavour.</p>
+        <ul>
+          <li>List item 1 for the 29 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 2 for the 29 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 3 for the 29 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 4 for the 29 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 5 for the 29 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 6 for the 29 collection with thoughtful notes about texture, aroma, and timing.</li>
+        </ul>
+      </section>
+      <section class="dense-section">
+        <div class="eyebrow">Expanded block 30</div>
+        <h3>More content section 30</h3>
+        <p>Fresh ideas, better kitchen rhythm, and more confidence with recipes that are practical to cook, simple to share, and rich in flavour.</p>
+        <ul>
+          <li>List item 1 for the 30 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 2 for the 30 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 3 for the 30 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 4 for the 30 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 5 for the 30 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 6 for the 30 collection with thoughtful notes about texture, aroma, and timing.</li>
+        </ul>
+      </section>
+      <section class="dense-section">
+        <div class="eyebrow">Expanded block 31</div>
+        <h3>More content section 31</h3>
+        <p>Fresh ideas, better kitchen rhythm, and more confidence with recipes that are practical to cook, simple to share, and rich in flavour.</p>
+        <ul>
+          <li>List item 1 for the 31 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 2 for the 31 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 3 for the 31 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 4 for the 31 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 5 for the 31 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 6 for the 31 collection with thoughtful notes about texture, aroma, and timing.</li>
+        </ul>
+      </section>
+      <section class="dense-section">
+        <div class="eyebrow">Expanded block 32</div>
+        <h3>More content section 32</h3>
+        <p>Fresh ideas, better kitchen rhythm, and more confidence with recipes that are practical to cook, simple to share, and rich in flavour.</p>
+        <ul>
+          <li>List item 1 for the 32 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 2 for the 32 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 3 for the 32 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 4 for the 32 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 5 for the 32 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 6 for the 32 collection with thoughtful notes about texture, aroma, and timing.</li>
+        </ul>
+      </section>
+      <section class="dense-section">
+        <div class="eyebrow">Expanded block 33</div>
+        <h3>More content section 33</h3>
+        <p>Fresh ideas, better kitchen rhythm, and more confidence with recipes that are practical to cook, simple to share, and rich in flavour.</p>
+        <ul>
+          <li>List item 1 for the 33 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 2 for the 33 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 3 for the 33 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 4 for the 33 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 5 for the 33 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 6 for the 33 collection with thoughtful notes about texture, aroma, and timing.</li>
+        </ul>
+      </section>
+      <section class="dense-section">
+        <div class="eyebrow">Expanded block 34</div>
+        <h3>More content section 34</h3>
+        <p>Fresh ideas, better kitchen rhythm, and more confidence with recipes that are practical to cook, simple to share, and rich in flavour.</p>
+        <ul>
+          <li>List item 1 for the 34 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 2 for the 34 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 3 for the 34 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 4 for the 34 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 5 for the 34 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 6 for the 34 collection with thoughtful notes about texture, aroma, and timing.</li>
+        </ul>
+      </section>
+      <section class="dense-section">
+        <div class="eyebrow">Expanded block 35</div>
+        <h3>More content section 35</h3>
+        <p>Fresh ideas, better kitchen rhythm, and more confidence with recipes that are practical to cook, simple to share, and rich in flavour.</p>
+        <ul>
+          <li>List item 1 for the 35 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 2 for the 35 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 3 for the 35 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 4 for the 35 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 5 for the 35 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 6 for the 35 collection with thoughtful notes about texture, aroma, and timing.</li>
+        </ul>
+      </section>
+      <section class="dense-section">
+        <div class="eyebrow">Expanded block 36</div>
+        <h3>More content section 36</h3>
+        <p>Fresh ideas, better kitchen rhythm, and more confidence with recipes that are practical to cook, simple to share, and rich in flavour.</p>
+        <ul>
+          <li>List item 1 for the 36 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 2 for the 36 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 3 for the 36 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 4 for the 36 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 5 for the 36 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 6 for the 36 collection with thoughtful notes about texture, aroma, and timing.</li>
+        </ul>
+      </section>
+      <section class="dense-section">
+        <div class="eyebrow">Expanded block 37</div>
+        <h3>More content section 37</h3>
+        <p>Fresh ideas, better kitchen rhythm, and more confidence with recipes that are practical to cook, simple to share, and rich in flavour.</p>
+        <ul>
+          <li>List item 1 for the 37 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 2 for the 37 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 3 for the 37 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 4 for the 37 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 5 for the 37 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 6 for the 37 collection with thoughtful notes about texture, aroma, and timing.</li>
+        </ul>
+      </section>
+      <section class="dense-section">
+        <div class="eyebrow">Expanded block 38</div>
+        <h3>More content section 38</h3>
+        <p>Fresh ideas, better kitchen rhythm, and more confidence with recipes that are practical to cook, simple to share, and rich in flavour.</p>
+        <ul>
+          <li>List item 1 for the 38 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 2 for the 38 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 3 for the 38 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 4 for the 38 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 5 for the 38 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 6 for the 38 collection with thoughtful notes about texture, aroma, and timing.</li>
+        </ul>
+      </section>
+      <section class="dense-section">
+        <div class="eyebrow">Expanded block 39</div>
+        <h3>More content section 39</h3>
+        <p>Fresh ideas, better kitchen rhythm, and more confidence with recipes that are practical to cook, simple to share, and rich in flavour.</p>
+        <ul>
+          <li>List item 1 for the 39 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 2 for the 39 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 3 for the 39 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 4 for the 39 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 5 for the 39 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 6 for the 39 collection with thoughtful notes about texture, aroma, and timing.</li>
+        </ul>
+      </section>
+      <section class="dense-section">
+        <div class="eyebrow">Expanded block 40</div>
+        <h3>More content section 40</h3>
+        <p>Fresh ideas, better kitchen rhythm, and more confidence with recipes that are practical to cook, simple to share, and rich in flavour.</p>
+        <ul>
+          <li>List item 1 for the 40 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 2 for the 40 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 3 for the 40 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 4 for the 40 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 5 for the 40 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 6 for the 40 collection with thoughtful notes about texture, aroma, and timing.</li>
+        </ul>
+      </section>
+      <section class="dense-section">
+        <div class="eyebrow">Expanded block 41</div>
+        <h3>More content section 41</h3>
+        <p>Fresh ideas, better kitchen rhythm, and more confidence with recipes that are practical to cook, simple to share, and rich in flavour.</p>
+        <ul>
+          <li>List item 1 for the 41 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 2 for the 41 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 3 for the 41 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 4 for the 41 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 5 for the 41 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 6 for the 41 collection with thoughtful notes about texture, aroma, and timing.</li>
+        </ul>
+      </section>
+      <section class="dense-section">
+        <div class="eyebrow">Expanded block 42</div>
+        <h3>More content section 42</h3>
+        <p>Fresh ideas, better kitchen rhythm, and more confidence with recipes that are practical to cook, simple to share, and rich in flavour.</p>
+        <ul>
+          <li>List item 1 for the 42 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 2 for the 42 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 3 for the 42 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 4 for the 42 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 5 for the 42 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 6 for the 42 collection with thoughtful notes about texture, aroma, and timing.</li>
+        </ul>
+      </section>
+      <section class="dense-section">
+        <div class="eyebrow">Expanded block 43</div>
+        <h3>More content section 43</h3>
+        <p>Fresh ideas, better kitchen rhythm, and more confidence with recipes that are practical to cook, simple to share, and rich in flavour.</p>
+        <ul>
+          <li>List item 1 for the 43 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 2 for the 43 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 3 for the 43 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 4 for the 43 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 5 for the 43 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 6 for the 43 collection with thoughtful notes about texture, aroma, and timing.</li>
+        </ul>
+      </section>
+      <section class="dense-section">
+        <div class="eyebrow">Expanded block 44</div>
+        <h3>More content section 44</h3>
+        <p>Fresh ideas, better kitchen rhythm, and more confidence with recipes that are practical to cook, simple to share, and rich in flavour.</p>
+        <ul>
+          <li>List item 1 for the 44 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 2 for the 44 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 3 for the 44 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 4 for the 44 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 5 for the 44 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 6 for the 44 collection with thoughtful notes about texture, aroma, and timing.</li>
+        </ul>
+      </section>
+      <section class="dense-section">
+        <div class="eyebrow">Expanded block 45</div>
+        <h3>More content section 45</h3>
+        <p>Fresh ideas, better kitchen rhythm, and more confidence with recipes that are practical to cook, simple to share, and rich in flavour.</p>
+        <ul>
+          <li>List item 1 for the 45 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 2 for the 45 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 3 for the 45 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 4 for the 45 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 5 for the 45 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 6 for the 45 collection with thoughtful notes about texture, aroma, and timing.</li>
+        </ul>
+      </section>
+      <section class="dense-section">
+        <div class="eyebrow">Expanded block 46</div>
+        <h3>More content section 46</h3>
+        <p>Fresh ideas, better kitchen rhythm, and more confidence with recipes that are practical to cook, simple to share, and rich in flavour.</p>
+        <ul>
+          <li>List item 1 for the 46 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 2 for the 46 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 3 for the 46 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 4 for the 46 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 5 for the 46 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 6 for the 46 collection with thoughtful notes about texture, aroma, and timing.</li>
+        </ul>
+      </section>
+      <section class="dense-section">
+        <div class="eyebrow">Expanded block 47</div>
+        <h3>More content section 47</h3>
+        <p>Fresh ideas, better kitchen rhythm, and more confidence with recipes that are practical to cook, simple to share, and rich in flavour.</p>
+        <ul>
+          <li>List item 1 for the 47 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 2 for the 47 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 3 for the 47 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 4 for the 47 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 5 for the 47 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 6 for the 47 collection with thoughtful notes about texture, aroma, and timing.</li>
+        </ul>
+      </section>
+      <section class="dense-section">
+        <div class="eyebrow">Expanded block 48</div>
+        <h3>More content section 48</h3>
+        <p>Fresh ideas, better kitchen rhythm, and more confidence with recipes that are practical to cook, simple to share, and rich in flavour.</p>
+        <ul>
+          <li>List item 1 for the 48 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 2 for the 48 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 3 for the 48 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 4 for the 48 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 5 for the 48 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 6 for the 48 collection with thoughtful notes about texture, aroma, and timing.</li>
+        </ul>
+      </section>
+      <section class="dense-section">
+        <div class="eyebrow">Expanded block 49</div>
+        <h3>More content section 49</h3>
+        <p>Fresh ideas, better kitchen rhythm, and more confidence with recipes that are practical to cook, simple to share, and rich in flavour.</p>
+        <ul>
+          <li>List item 1 for the 49 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 2 for the 49 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 3 for the 49 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 4 for the 49 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 5 for the 49 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 6 for the 49 collection with thoughtful notes about texture, aroma, and timing.</li>
+        </ul>
+      </section>
+      <section class="dense-section">
+        <div class="eyebrow">Expanded block 50</div>
+        <h3>More content section 50</h3>
+        <p>Fresh ideas, better kitchen rhythm, and more confidence with recipes that are practical to cook, simple to share, and rich in flavour.</p>
+        <ul>
+          <li>List item 1 for the 50 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 2 for the 50 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 3 for the 50 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 4 for the 50 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 5 for the 50 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 6 for the 50 collection with thoughtful notes about texture, aroma, and timing.</li>
+        </ul>
+      </section>
+      <section class="dense-section">
+        <div class="eyebrow">Expanded block 51</div>
+        <h3>More content section 51</h3>
+        <p>Fresh ideas, better kitchen rhythm, and more confidence with recipes that are practical to cook, simple to share, and rich in flavour.</p>
+        <ul>
+          <li>List item 1 for the 51 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 2 for the 51 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 3 for the 51 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 4 for the 51 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 5 for the 51 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 6 for the 51 collection with thoughtful notes about texture, aroma, and timing.</li>
+        </ul>
+      </section>
+      <section class="dense-section">
+        <div class="eyebrow">Expanded block 52</div>
+        <h3>More content section 52</h3>
+        <p>Fresh ideas, better kitchen rhythm, and more confidence with recipes that are practical to cook, simple to share, and rich in flavour.</p>
+        <ul>
+          <li>List item 1 for the 52 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 2 for the 52 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 3 for the 52 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 4 for the 52 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 5 for the 52 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 6 for the 52 collection with thoughtful notes about texture, aroma, and timing.</li>
+        </ul>
+      </section>
+      <section class="dense-section">
+        <div class="eyebrow">Expanded block 53</div>
+        <h3>More content section 53</h3>
+        <p>Fresh ideas, better kitchen rhythm, and more confidence with recipes that are practical to cook, simple to share, and rich in flavour.</p>
+        <ul>
+          <li>List item 1 for the 53 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 2 for the 53 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 3 for the 53 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 4 for the 53 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 5 for the 53 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 6 for the 53 collection with thoughtful notes about texture, aroma, and timing.</li>
+        </ul>
+      </section>
+      <section class="dense-section">
+        <div class="eyebrow">Expanded block 54</div>
+        <h3>More content section 54</h3>
+        <p>Fresh ideas, better kitchen rhythm, and more confidence with recipes that are practical to cook, simple to share, and rich in flavour.</p>
+        <ul>
+          <li>List item 1 for the 54 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 2 for the 54 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 3 for the 54 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 4 for the 54 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 5 for the 54 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 6 for the 54 collection with thoughtful notes about texture, aroma, and timing.</li>
+        </ul>
+      </section>
+      <section class="dense-section">
+        <div class="eyebrow">Expanded block 55</div>
+        <h3>More content section 55</h3>
+        <p>Fresh ideas, better kitchen rhythm, and more confidence with recipes that are practical to cook, simple to share, and rich in flavour.</p>
+        <ul>
+          <li>List item 1 for the 55 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 2 for the 55 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 3 for the 55 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 4 for the 55 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 5 for the 55 collection with thoughtful notes about texture, aroma, and timing.</li>
+          <li>List item 6 for the 55 collection with thoughtful notes about texture, aroma, and timing.</li>
+        </ul>
+      </section>
+    </main>
     <div id="toast-region" class="toast-region" aria-live="polite" aria-atomic="true"></div>
     <div id="modal-root"></div>
     <footer class="site-footer" role="contentinfo"><span>Made for local cooking communities.</span><span>© <span id="year"></span> Recipely</span></footer>
