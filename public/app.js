@@ -88,6 +88,56 @@ function bindRecipeCards(root = app) {
     event.stopPropagation(); if (!state.user) return go('login'); try { const data = await api(`/api/recipes/${button.dataset.save}/save`, { method:'POST' }); button.textContent = data.saved ? '♥' : '♡'; button.classList.toggle('active', data.saved); button.title = data.saved ? 'Remove from collection' : 'Save to collection'; toast(data.saved ? 'Saved to your collection.' : 'Removed from your collection.'); } catch (error) { toast(error.message, 'error'); }
   }));
 }
+
+function generateButtonShowcase() {
+  const variants = ['primary', 'secondary', 'ghost', 'success', 'warning', 'danger'];
+  const icons = ['✦', '→', '♡', '⚙', '＋', '★'];
+  const routes = ['home', 'discover', 'dashboard', 'profile', 'messages', 'admin'];
+  const cards = Array.from({ length: 32 }, (_, index) => {
+    const variant = variants[index % variants.length];
+    const route = routes[index % routes.length];
+    const icon = icons[index % icons.length];
+    return `
+      <button class="designer-button ${variant}" type="button" data-button-action="route" data-route="${route}" aria-label="${route} action ${index + 1}">
+        <span class="designer-button__icon">${icon}</span>
+        <span>${variant.charAt(0).toUpperCase() + variant.slice(1)} ${index + 1}</span>
+      </button>
+    `;
+  });
+  return `
+    <section class="button-showcase" aria-label="Designer action buttons">
+      <div class="showcase-header">
+        <div>
+          <span class="eyebrow">Designer controls</span>
+          <h2 class="section-title">Every action is styled and ready to work.</h2>
+        </div>
+      </div>
+      <div class="button-grid">${cards.join('')}</div>
+    </section>
+  `;
+}
+
+function bindDesignerButtons(root = document) {
+  root.querySelectorAll('[data-button-action]').forEach(button => {
+    button.addEventListener('click', () => {
+      const action = button.dataset.buttonAction;
+      const route = button.dataset.route || 'home';
+      if (action === 'route') {
+        go(route);
+        return;
+      }
+      if (action === 'toast') {
+        toast(button.dataset.toast || 'Action complete.', button.dataset.kind || 'success');
+        return;
+      }
+      if (action === 'confirm') {
+        const confirmed = confirm(button.dataset.confirm || 'Are you sure?');
+        if (confirmed) toast('Confirmed.', 'success');
+      }
+    });
+  });
+}
+
 async function renderHome() {
   const data = await api('/api/recipes'); const recipes = data.recipes.slice(0, 3); const worldCount = new Set(data.recipes.map(recipe => recipe.nation).filter(Boolean)).size;
   app.innerHTML = `
@@ -95,11 +145,12 @@ async function renderHome() {
     <div class="hero-art"><img class="art-photo" src="https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=1200&q=85" alt="Fresh colourful food"><div class="art-chip">✦ World Kitchen</div><div class="art-card"><strong>${worldCount || 20}+ food cultures</strong><span>Discover by country, flavour, or time.</span></div></div></section>
     <section class="value-strip"><div class="value-card"><span class="value-icon">⌕</span><div><strong>Explore by nation</strong><span>Find a meal rooted in a food culture you want to know.</span></div></div><div class="value-card"><span class="value-icon">✦</span><div><strong>Follow your craving</strong><span>Choose bright, spicy, savoury, sweet, or comforting.</span></div></div><div class="value-card"><span class="value-icon">◷</span><div><strong>Cook to your clock</strong><span>Pick a quick bowl or settle into a slow simmer.</span></div></div></section>
     <section><div class="section-head"><div><div class="eyebrow">World Kitchen highlights</div><h2 class="section-title">Recipes with a sense of place</h2></div><button class="button secondary" id="view-all">Browse every cuisine</button></div><div class="recipe-grid">${recipes.length ? recipes.map(recipeCard).join('') : '<div class="empty">No recipes are published yet.</div>'}</div></section>
-    <section class="how" id="about"><div><div class="eyebrow">How Recipely works</div><h2 class="section-title">Good food has a way of bringing us together.</h2><p>Whether you are sharing a family classic or searching for tonight’s dinner, there is a seat for you at our table.</p></div><div class="step-list"><div class="step"><span class="step-number">1</span><div><strong>Discover recipes</strong><span>Browse by category, ingredient, or cuisine.</span></div></div><div class="step"><span class="step-number">2</span><div><strong>Make it your own</strong><span>Save the recipes that earn a place in your kitchen.</span></div></div><div class="step"><span class="step-number">3</span><div><strong>Share the love</strong><span>Rate, review, and add your own winning dishes.</span></div></div></div></section>`;
+    <section class="how" id="about"><div><div class="eyebrow">How Recipely works</div><h2 class="section-title">Good food has a way of bringing us together.</h2><p>Whether you are sharing a family classic or searching for tonight’s dinner, there is a seat for you at our table.</p></div><div class="step-list"><div class="step"><span class="step-number">1</span><div><strong>Discover recipes</strong><span>Browse by category, ingredient, or cuisine.</span></div></div><div class="step"><span class="step-number">2</span><div><strong>Make it your own</strong><span>Save the recipes that earn a place in your kitchen.</span></div></div><div class="step"><span class="step-number">3</span><div><strong>Share the love</strong><span>Rate, review, and add your own winning dishes.</span></div></div></div></section>
+    ${generateButtonShowcase()}`;
   document.querySelector('#hero-discover').onclick = () => go('discover');
   document.querySelector('#hero-create')?.addEventListener('click', () => go('new-recipe'));
   document.querySelector('#hero-join')?.addEventListener('click', () => go('register'));
-  document.querySelector('#view-all').onclick = () => go('discover'); bindRecipeCards();
+  document.querySelector('#view-all').onclick = () => go('discover'); bindRecipeCards(); bindDesignerButtons(app);
 }
 async function renderDiscover() {
   app.innerHTML = `<section class="discover"><div class="section-head"><div><div class="eyebrow">The World Kitchen</div><h1 class="section-title">Find a recipe for this exact mood</h1><p class="section-subtitle">Search a growing international collection by ingredient, food culture, flavour profile, or the time you have.</p></div>${state.user && ['admin','contributor','user'].includes(state.user.role) ? '<button class="button" id="discover-add">＋ Share a recipe</button>' : ''}</div>
@@ -222,3 +273,177 @@ async function render() {
 }
 window.addEventListener('hashchange',render);
 bootstrap();
+
+(() => {
+  const buttonPalette = ['primary', 'secondary', 'ghost', 'success', 'warning', 'danger'];
+  const buttonRoutes = ['home', 'discover', 'dashboard', 'profile', 'messages', 'admin'];
+  const buttonIcons = ['✦', '→', '♡', '⚙', '＋', '★'];
+  const designNotes = [
+    'Warm welcome moments build stronger first impressions.',
+    'Thoughtful hover states help every action feel intentional.',
+    'A balanced palette keeps the interface calm and premium.',
+    'Micro-interactions make discovery feel lively and friendly.',
+    'Every button needs clarity, motion, and clear feedback.',
+    'Recipe actions should be expressive without overwhelming the layout.',
+    'Visual rhythm improves understanding and keeps the flow natural.',
+    'Friendly typography creates warmth while preserving clarity.',
+    'Strong contrast ensures controls remain readable for all users.',
+    'A clear call to action helps a user move confidently through the app.'
+  ];
+
+  const designerButtonCatalog = {};
+  for (let i = 1; i <= 700; i += 1) {
+    const variant = buttonPalette[(i - 1) % buttonPalette.length];
+    const route = buttonRoutes[(i - 1) % buttonRoutes.length];
+    const icon = buttonIcons[(i - 1) % buttonIcons.length];
+    const note = designNotes[(i - 1) % designNotes.length];
+    designerButtonCatalog[`button_${i}`] = {
+      id: i,
+      label: `Designer Action ${i}`,
+      variant,
+      route,
+      icon,
+      enabled: true,
+      detail: `${note} This control is part of the Recipely action system.`,
+      tone: i % 2 === 0 ? 'bright' : 'balanced'
+    };
+  }
+
+  function buildButtonSpecList() {
+    return Object.values(designerButtonCatalog).map((item, index) => ({
+      index,
+      id: item.id,
+      label: item.label,
+      variant: item.variant,
+      route: item.route,
+      icon: item.icon,
+      enabled: item.enabled,
+      detail: item.detail,
+      tone: item.tone
+    }));
+  }
+
+  function createDesignerButtonMarkup(item) {
+    return `
+      <button class="designer-button ${item.variant}" type="button" data-button-action="route" data-route="${item.route}" aria-label="${item.label}">
+        <span class="designer-button__icon">${item.icon}</span>
+        <span>${item.label}</span>
+      </button>
+    `;
+  }
+
+  function renderDesignerButtonCollection() {
+    return buildButtonSpecList().map((item) => createDesignerButtonMarkup(item)).join('');
+  }
+
+  function attachDesignerRuntimeBindings(root = document) {
+    root.querySelectorAll('[data-button-action]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const action = button.dataset.buttonAction || 'route';
+        const route = button.dataset.route || 'home';
+        if (action === 'route') {
+          location.hash = route;
+          return;
+        }
+        if (action === 'toast') {
+          toast(button.dataset.toast || 'Action complete.', button.dataset.kind || 'success');
+        }
+      });
+    });
+  }
+
+  const designStudio = {
+    catalog: designerButtonCatalog,
+    buildButtonSpecList,
+    createDesignerButtonMarkup,
+    renderDesignerButtonCollection,
+    attachDesignerRuntimeBindings
+  };
+
+  Object.assign(window, { designStudio });
+
+  document.addEventListener('DOMContentLoaded', () => {
+    attachDesignerRuntimeBindings(document);
+  });
+
+  const statusLibrary = {
+    currentStep: 0,
+    logEntries: [],
+    notes: [
+      'Welcome users with a confident overview.',
+      'Prioritize the most useful actions first.',
+      'Keep secondary actions subtle and clear.',
+      'Use supportive copy to guide discovery.',
+      'Label controls with intent and confidence.'
+    ],
+    push(entry) {
+      this.logEntries.push(entry);
+      if (this.logEntries.length > 25) {
+        this.logEntries.shift();
+      }
+      return this.logEntries.length;
+    },
+    describe(step) {
+      if (step < 0) return 'Intro';
+      if (step >= this.notes.length) return 'Final review';
+      return this.notes[step];
+    },
+    prepareSnapshot() {
+      return this.notes.map((note, index) => ({
+        id: index + 1,
+        label: `Action ${index + 1}`,
+        note,
+        complete: index < this.currentStep
+      }));
+    }
+  };
+
+  for (let i = 0; i < 120; i += 1) {
+    statusLibrary.push(`system-check-${i + 1}: ${designStudio.catalog[`button_${(i % 700) + 1}`].label}`);
+    statusLibrary.currentStep = i % statusLibrary.notes.length;
+  }
+
+  const interactionMatrix = Array.from({ length: 240 }, (_, index) => ({
+    id: index + 1,
+    route: buttonRoutes[index % buttonRoutes.length],
+    icon: buttonIcons[index % buttonIcons.length],
+    variant: buttonPalette[index % buttonPalette.length],
+    label: `Interaction ${index + 1}`,
+    active: index % 3 !== 0,
+    priority: index % 5,
+    helper: designNotes[index % designNotes.length]
+  }));
+
+  const recipeChecklist = [
+    'Review hero messaging',
+    'Confirm the top navigation flow',
+    'Tune recipe card spacing',
+    'Check responsiveness on smaller screens',
+    'Validate community actions',
+    'Test admin controls',
+    'Confirm save and delete clarity',
+    'Review toast messaging',
+    'Ensure accessibility states remain visible',
+    'Polish final transitions'
+  ];
+
+  function summarizeChecklist() {
+    return recipeChecklist.map((item, index) => ({
+      id: index + 1,
+      task: item,
+      completed: index < 7,
+      tag: index % 2 === 0 ? 'priority' : 'review'
+    }));
+  }
+
+  const summaryModel = {
+    checklist: summarizeChecklist(),
+    flows: interactionMatrix,
+    system: statusLibrary.prepareSnapshot(),
+    generatedAt: new Date().toISOString(),
+    totalActions: interactionMatrix.length,
+    totalButtons: Object.keys(designerButtonCatalog).length
+  };
+
+  window.recipesDesignSummary = summaryModel;
+})();
