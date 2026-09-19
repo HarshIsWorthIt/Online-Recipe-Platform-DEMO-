@@ -3,6 +3,9 @@ const accountActions = document.querySelector('#account-actions');
 const modalRoot = document.querySelector('#modal-root');
 const toastRegion = document.querySelector('#toast-region');
 document.querySelector('#year').textContent = new Date().getFullYear();
+document.addEventListener('error', event => {
+  if (event.target instanceof HTMLImageElement) event.target.remove();
+}, true);
 
 const state = { user: null, settings: {}, routeVersion: 0, messageRecipient: null };
 const categories = ['Breakfast','Lunch','Dinner','Dessert','Snack','Drink','Other'];
@@ -11,8 +14,8 @@ const tastes = ['Aromatic & spicy','Bold & spicy','Bright & tangy','Creamy & com
 
 function escapeHtml(value = '') { return String(value).replace(/[&<>'"]/g, char => ({ '&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;' })[char]); }
 function initials(name = '') { return name.split(' ').map(x => x[0]).join('').slice(0,2).toUpperCase() || '?'; }
-function avatar(user, cls = 'avatar') { return `<span class="${cls}">${user?.avatar_url ? `<img src="${escapeHtml(user.avatar_url)}" alt="" onerror="this.remove()">` : initials(user?.name)}</span>`; }
-function image(recipe, cls = '') { return recipe.photo_url ? `<img class="${cls}" src="${escapeHtml(recipe.photo_url)}" alt="${escapeHtml(recipe.title)}" onerror="this.remove()">` : ''; }
+function avatar(user, cls = 'avatar') { return `<span class="${cls}">${user?.avatar_url ? `<img src="${escapeHtml(user.avatar_url)}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer">` : initials(user?.name)}</span>`; }
+function image(recipe, cls = '') { return recipe.photo_url ? `<img class="${cls}" src="${escapeHtml(recipe.photo_url)}" alt="${escapeHtml(recipe.title)}" loading="lazy" decoding="async" referrerpolicy="no-referrer">` : ''; }
 function plural(value, word) { return `${value} ${word}${Number(value) === 1 ? '' : 's'}`; }
 function formatDate(date) { return new Intl.DateTimeFormat(undefined, { month:'short', day:'numeric', year:'numeric' }).format(new Date(date)); }
 function relativeDate(date) { const minutes = Math.floor((Date.now() - new Date(date).getTime()) / 60000); if (minutes < 1) return 'just now'; if (minutes < 60) return `${minutes}m ago`; if (minutes < 1440) return `${Math.floor(minutes / 60)}h ago`; return formatDate(date); }
@@ -25,16 +28,31 @@ function stat(label, value) { return `<div class="stat"><span class="stat-label"
 function setLoading() { app.innerHTML = '<div class="loading">Preparing something delicious…</div>'; }
 
 async function api(path, options = {}) {
-  const init = { ...options, headers: { ...(options.body ? { 'Content-Type':'application/json' } : {}), ...(options.headers || {}) } };
+  const controller = options.signal ? null : new AbortController();
+  const timeout = controller ? setTimeout(() => controller.abort(), 15_000) : null;
+  const init = {
+    ...options,
+    credentials: 'same-origin',
+    signal: options.signal || controller?.signal,
+    headers: { Accept:'application/json', ...(options.body ? { 'Content-Type':'application/json' } : {}), ...(options.headers || {}) },
+  };
   if (init.body && typeof init.body !== 'string') init.body = JSON.stringify(init.body);
-  const response = await fetch(path, init);
-  const data = await response.json().catch(() => ({}));
-  if (!response.ok) throw new Error(data.error || 'Something went wrong.');
-  return data;
+  try {
+    const response = await fetch(path, init);
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      if (response.status === 401 && state.user && !path.startsWith('/api/auth/login')) { state.user = null; renderAccount(); }
+      throw new Error(data.error || 'Something went wrong.');
+    }
+    return data;
+  } catch (error) {
+    if (error.name === 'AbortError') throw new Error('The request timed out. Please check your connection and try again.');
+    throw error;
+  } finally { if (timeout) clearTimeout(timeout); }
 }
 async function bootstrap() {
   try { const data = await api('/api/session'); state.user = data.user; state.settings = data.settings || {}; renderAccount(); await render(); }
-  catch (error) { app.innerHTML = empty('⚠️','Could not start Recipely',error.message,'<button class="button" onclick="location.reload()">Try again</button>'); }
+  catch (error) { app.innerHTML = empty('⚠️','Could not start Recipely',error.message,'<button class="button" id="bootstrap-retry">Try again</button>'); document.querySelector('#bootstrap-retry')?.addEventListener('click', () => location.reload()); }
 }
 function renderAccount() {
   accountActions.innerHTML = state.user ? `
@@ -51,7 +69,7 @@ async function logout() { try { await api('/api/auth/logout', { method:'POST' })
 
 function recipeCard(recipe) {
   const rating = recipe.rating ? `★ ${recipe.rating.toFixed(1)}` : 'New recipe';
-  return `<article class="recipe-card" data-recipe="${recipe.id}" tabindex="0" role="button">
+  return `<article class="recipe-card" data-recipe="${recipe.id}" tabindex="0" role="button" aria-label="Open recipe: ${escapeHtml(recipe.title)}">
     <div class="recipe-image">${image(recipe)}${state.user && recipe.status === 'approved' ? `<button class="icon-button save-card ${recipe.saved ? 'active' : ''}" data-save="${recipe.id}" title="${recipe.saved ? 'Remove from collection' : 'Save to collection'}">${recipe.saved ? '♥' : '♡'}</button>` : ''}</div>
     <div class="recipe-card-body"><div class="card-context"><span class="tag">${escapeHtml(recipe.category)}</span>${recipe.nation ? `<span class="origin-tag">${escapeHtml(recipe.nation)}</span>` : ''}</div><h3>${escapeHtml(recipe.title)}</h3><p>${escapeHtml(recipe.description || `By ${recipe.author?.name || 'Recipely cook'}`)}</p>
     <div class="meta-row"><span>${timeFor(recipe)} · ${plural(recipe.servings,'serve')}</span><span class="rating">${rating}</span></div></div>
@@ -60,7 +78,7 @@ function recipeCard(recipe) {
 function bindRecipeCards(root = app) {
   root.querySelectorAll('[data-recipe]').forEach(card => {
     const open = event => { if (!event.target.closest('[data-save]')) go(`recipe/${card.dataset.recipe}`); };
-    card.addEventListener('click', open); card.addEventListener('keydown', event => { if (event.key === 'Enter') open(event); });
+    card.addEventListener('click', open); card.addEventListener('keydown', event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); open(event); } });
   });
   root.querySelectorAll('[data-save]').forEach(button => button.addEventListener('click', async event => {
     event.stopPropagation(); if (!state.user) return go('login'); try { const data = await api(`/api/recipes/${button.dataset.save}/save`, { method:'POST' }); button.textContent = data.saved ? '♥' : '♡'; button.classList.toggle('active', data.saved); button.title = data.saved ? 'Remove from collection' : 'Save to collection'; toast(data.saved ? 'Saved to your collection.' : 'Removed from your collection.'); } catch (error) { toast(error.message, 'error'); }

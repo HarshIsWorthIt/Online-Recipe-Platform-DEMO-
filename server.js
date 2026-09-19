@@ -13,10 +13,34 @@ const { DatabaseSync } = require('node:sqlite');
 const ROOT = __dirname;
 const PUBLIC_DIR = path.join(ROOT, 'public');
 const DATA_DIR = path.join(ROOT, 'data');
-const PORT = Number(process.env.PORT || 3000);
+const isProduction = process.env.NODE_ENV === 'production';
+const asBoolean = (value, fallback = false) => value === undefined ? fallback : /^(1|true|yes)$/i.test(value);
+const asPort = (value, fallback) => {
+  const port = Number(value);
+  return Number.isInteger(port) && port > 0 && port <= 65535 ? port : fallback;
+};
+const config = Object.freeze({
+  environment: process.env.NODE_ENV || 'development',
+  host: process.env.HOST || (isProduction ? '0.0.0.0' : '127.0.0.1'),
+  port: asPort(process.env.PORT, 3000),
+  appOrigin: (process.env.APP_ORIGIN || '').replace(/\/$/, ''),
+  trustProxy: asBoolean(process.env.TRUST_PROXY),
+  secureCookies: asBoolean(process.env.COOKIE_SECURE, isProduction),
+  seedDemoData: asBoolean(process.env.SEED_DEMO_DATA, !isProduction),
+  sessionDays: Math.max(1, Math.min(30, Number(process.env.SESSION_DAYS) || 7)),
+});
+if (isProduction && !config.appOrigin) throw new Error('APP_ORIGIN is required when NODE_ENV=production.');
+if (config.appOrigin) {
+  let parsedOrigin;
+  try { parsedOrigin = new URL(config.appOrigin); } catch { throw new Error('APP_ORIGIN must be a valid absolute URL.'); }
+  if (parsedOrigin.origin !== config.appOrigin || !['http:', 'https:'].includes(parsedOrigin.protocol)) {
+    throw new Error('APP_ORIGIN must contain only an HTTP(S) origin, without a path.');
+  }
+}
+const PORT = config.port;
 fs.mkdirSync(DATA_DIR, { recursive: true });
 const db = new DatabaseSync(path.join(DATA_DIR, 'recipely.db'));
-db.exec('PRAGMA foreign_keys = ON; PRAGMA journal_mode = WAL;');
+db.exec('PRAGMA foreign_keys = ON; PRAGMA journal_mode = WAL; PRAGMA busy_timeout = 5000;');
 
 const now = () => new Date().toISOString();
 const one = (sql, ...values) => db.prepare(sql).get(...values);
@@ -104,6 +128,12 @@ function initDatabase() {
       detail TEXT NOT NULL,
       created_at TEXT NOT NULL
     );
+    CREATE INDEX IF NOT EXISTS idx_sessions_expires_at ON sessions(expires_at);
+    CREATE INDEX IF NOT EXISTS idx_recipes_status_created_at ON recipes(status, created_at DESC);
+    CREATE INDEX IF NOT EXISTS idx_recipes_user_created_at ON recipes(user_id, created_at DESC);
+    CREATE INDEX IF NOT EXISTS idx_reviews_recipe_id ON reviews(recipe_id);
+    CREATE INDEX IF NOT EXISTS idx_messages_participants_created_at ON messages(sender_id, recipient_id, created_at);
+    CREATE INDEX IF NOT EXISTS idx_activities_created_at ON activities(created_at DESC);
   `);
   // Existing local installations migrate themselves without losing recipes.
   const recipeColumns = new Set(all('PRAGMA table_info(recipes)').map(column => column.name));
@@ -117,6 +147,7 @@ function initDatabase() {
   for (const [key, value] of Object.entries(defaults)) {
     run('INSERT OR IGNORE INTO settings (key, value, updated_at) VALUES (?, ?, ?)', key, value, now());
   }
+  run('DELETE FROM sessions WHERE expires_at <= ?', now());
 }
 
 function hashPassword(password) {
@@ -126,9 +157,11 @@ function hashPassword(password) {
 }
 function verifyPassword(password, stored) {
   const [salt, key] = String(stored).split(':');
-  if (!salt || !key) return false;
+  if (!salt || !key || !/^[a-f0-9]{128}$/i.test(key)) return false;
   const derived = crypto.scryptSync(password, salt, 64).toString('hex');
-  return crypto.timingSafeEqual(Buffer.from(key, 'hex'), Buffer.from(derived, 'hex'));
+  const expected = Buffer.from(key, 'hex');
+  const actual = Buffer.from(derived, 'hex');
+  return expected.length === actual.length && crypto.timingSafeEqual(expected, actual);
 }
 function activity(userId, type, detail) {
   run('INSERT INTO activities (user_id, type, detail, created_at) VALUES (?, ?, ?, ?)', userId || null, type, detail, now());
@@ -208,13 +241,34 @@ function seedDatabase() {
   }
 }
 
-initDatabase();
-seedDatabase();
+function bootstrapAdministrator() {
+  const email = String(process.env.ADMIN_EMAIL || '').trim().toLowerCase();
+  const password = String(process.env.ADMIN_PASSWORD || '');
+  const name = String(process.env.ADMIN_NAME || 'Platform administrator').trim().slice(0, 80);
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || password.length < 12) {
+    throw new Error('A first production launch requires ADMIN_EMAIL and an ADMIN_PASSWORD of at least 12 characters.');
+  }
+  const stamp = now();
+  const result = run(`INSERT INTO users (name,email,password_hash,role,bio,created_at,updated_at)
+    VALUES (?, ?, ?, 'admin', '', ?, ?)`, name, email, hashPassword(password), stamp, stamp);
+  activity(Number(result.lastInsertRowid), 'platform_bootstrapped', 'Production administrator created');
+}
+
+function initializeWorkspace() {
+  initDatabase();
+  if (one('SELECT COUNT(*) AS count FROM users').count > 0) return;
+  if (config.seedDemoData) return seedDatabase();
+  bootstrapAdministrator();
+}
+
+initializeWorkspace();
 
 function parseCookies(req) {
   return Object.fromEntries((req.headers.cookie || '').split(';').map(part => {
     const index = part.indexOf('=');
-    return index === -1 ? [] : [part.slice(0, index).trim(), decodeURIComponent(part.slice(index + 1).trim())];
+    if (index === -1) return [];
+    try { return [part.slice(0, index).trim(), decodeURIComponent(part.slice(index + 1).trim())]; }
+    catch { return []; }
   }).filter(pair => pair.length));
 }
 function getCurrentUser(req) {
@@ -226,21 +280,72 @@ function getCurrentUser(req) {
 }
 function setSession(res, userId) {
   const token = crypto.randomBytes(32).toString('base64url');
-  const expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+  const maxAge = config.sessionDays * 24 * 60 * 60;
+  const expires = new Date(Date.now() + maxAge * 1000).toISOString();
+  run('DELETE FROM sessions WHERE expires_at <= ?', now());
   run('INSERT INTO sessions (id,user_id,expires_at,created_at) VALUES (?, ?, ?, ?)', token, userId, expires, now());
-  res.setHeader('Set-Cookie', `recipely_session=${token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=604800`);
+  run(`DELETE FROM sessions WHERE id IN (
+    SELECT id FROM sessions WHERE user_id = ? ORDER BY created_at DESC LIMIT -1 OFFSET 5
+  )`, userId);
+  res.setHeader('Set-Cookie', `recipely_session=${token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${maxAge}${config.secureCookies ? '; Secure' : ''}`);
 }
 function clearSession(req, res) {
   const token = parseCookies(req).recipely_session;
   if (token) run('DELETE FROM sessions WHERE id = ?', token);
-  res.setHeader('Set-Cookie', 'recipely_session=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0');
+  res.setHeader('Set-Cookie', `recipely_session=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0${config.secureCookies ? '; Secure' : ''}`);
+}
+
+class HttpError extends Error {
+  constructor(status, message) { super(message); this.status = status; }
+}
+
+const RATE_WINDOWS = { auth: { max: 10, ms: 15 * 60 * 1000 }, mutation: { max: 120, ms: 60 * 1000 } };
+const rateBuckets = new Map();
+function clientIp(req) {
+  if (config.trustProxy) return String(req.headers['x-forwarded-for'] || '').split(',')[0].trim() || 'unknown';
+  return req.socket.remoteAddress || 'unknown';
+}
+function enforceRateLimit(req, res, kind) {
+  const rule = RATE_WINDOWS[kind];
+  const key = `${kind}:${clientIp(req)}`;
+  const current = rateBuckets.get(key);
+  const timestamp = Date.now();
+  const bucket = !current || current.resetAt <= timestamp ? { count: 0, resetAt: timestamp + rule.ms } : current;
+  bucket.count += 1;
+  rateBuckets.set(key, bucket);
+  res.setHeader('RateLimit-Limit', String(rule.max));
+  res.setHeader('RateLimit-Remaining', String(Math.max(0, rule.max - bucket.count)));
+  res.setHeader('RateLimit-Reset', String(Math.ceil(bucket.resetAt / 1000)));
+  if (bucket.count <= rule.max) return true;
+  res.setHeader('Retry-After', String(Math.ceil((bucket.resetAt - timestamp) / 1000)));
+  fail(res, 429, 'Too many requests. Please wait a moment and try again.');
+  return false;
+}
+function cleanText(value, max = 5000) { return String(value ?? '').trim().slice(0, max); }
+function validEmail(value) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value); }
+function validPassword(value) { return typeof value === 'string' && value.length >= 8 && value.length <= 256; }
+function cleanUrl(value, label) {
+  const text = cleanText(value, 2000);
+  if (!text) return '';
+  try {
+    const parsed = new URL(text);
+    if (parsed.username || parsed.password || !['https:', ...(isProduction ? [] : ['http:'])].includes(parsed.protocol)) throw new Error();
+    return parsed.toString();
+  } catch { throw new HttpError(400, `${label} must be a valid ${isProduction ? 'HTTPS' : 'HTTP or HTTPS'} URL.`); }
+}
+function boundedInteger(value, fallback, min, max) {
+  const number = Number(value);
+  return Number.isInteger(number) ? Math.max(min, Math.min(max, number)) : fallback;
+}
+function validatePreferences(value, fallback = {}) {
+  const preference = value && typeof value === 'object' && ['vegetarian', 'quick', 'baking', ''].includes(value.preference) ? value.preference : fallback.preference || '';
+  return { preference };
 }
 function send(res, status, payload) {
-  res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' });
+  res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', 'X-Request-Id': res.getHeader('X-Request-Id') || crypto.randomUUID() });
   res.end(JSON.stringify(payload));
 }
 function fail(res, status, error) { send(res, status, { error }); }
-function cleanText(value, max = 5000) { return String(value || '').trim().slice(0, max); }
 function requireUser(req, res) {
   const user = getCurrentUser(req);
   if (!user) { fail(res, 401, 'Please sign in to continue.'); return null; }
@@ -251,15 +356,31 @@ function requireAdmin(req, res) {
   return user && user.role === 'admin' ? user : (user ? (fail(res, 403, 'Administrator access is required.'), null) : null);
 }
 function canContribute(user) { return ['admin', 'contributor', 'user'].includes(user.role); }
+function wouldRemoveLastActiveAdmin(target, nextRole = target.role, nextActive = Boolean(target.is_active)) {
+  if (target.role !== 'admin' || !target.is_active || (nextRole === 'admin' && nextActive)) return false;
+  return Number(one("SELECT COUNT(*) AS count FROM users WHERE role = 'admin' AND is_active = 1").count) <= 1;
+}
 async function body(req) {
   return new Promise((resolve, reject) => {
-    let text = '';
+    if (!String(req.headers['content-type'] || '').toLowerCase().startsWith('application/json')) {
+      reject(new HttpError(415, 'Requests to this endpoint must use application/json.'));
+      return;
+    }
+    let size = 0;
+    const chunks = [];
+    let settled = false;
+    const rejectOnce = error => { if (!settled) { settled = true; reject(error); } };
     req.on('data', chunk => {
-      text += chunk;
-      if (text.length > 1024 * 1024) { reject(new Error('Request is too large.')); req.destroy(); }
+      size += chunk.length;
+      if (size > 1024 * 1024) return rejectOnce(new HttpError(413, 'Request is too large.'));
+      chunks.push(chunk);
     });
-    req.on('end', () => { try { resolve(text ? JSON.parse(text) : {}); } catch { reject(new Error('Invalid request data.')); } });
-    req.on('error', reject);
+    req.on('end', () => {
+      if (settled) return;
+      try { settled = true; resolve(size ? JSON.parse(Buffer.concat(chunks).toString('utf8')) : {}); }
+      catch { reject(new HttpError(400, 'Invalid JSON request data.')); }
+    });
+    req.on('error', error => rejectOnce(error));
   });
 }
 function validateRecipe(data) {
@@ -274,25 +395,24 @@ function validateRecipe(data) {
     title, description, ingredients: JSON.stringify(ingredients), instructions: JSON.stringify(instructions),
     category: cleanText(data.category, 50) || 'Other', cuisine: cleanText(data.cuisine, 50),
     nation: cleanText(data.nation, 50), taste: cleanText(data.taste, 50),
-    prep_minutes: Math.max(0, Math.min(1440, Number(data.prep_minutes) || 0)),
-    cook_minutes: Math.max(0, Math.min(1440, Number(data.cook_minutes) || 0)),
-    servings: Math.max(1, Math.min(100, Number(data.servings) || 2)),
-    photo_url: cleanText(data.photo_url, 2000),
+    prep_minutes: boundedInteger(data.prep_minutes, 0, 0, 1440),
+    cook_minutes: boundedInteger(data.cook_minutes, 0, 0, 1440),
+    servings: boundedInteger(data.servings, 2, 1, 100),
+    photo_url: cleanUrl(data.photo_url, 'Photo URL'),
   };
 }
 
 async function api(req, res, url) {
   const method = req.method;
   const pathname = url.pathname;
-  const parts = pathname.split('/').filter(Boolean);
   const current = getCurrentUser(req);
 
-  if (method === 'GET' && pathname === '/api/session') return send(res, 200, { user: publicUser(current), settings: Object.fromEntries(all('SELECT key, value FROM settings').map(x => [x.key, x.value])) });
+  if (method === 'GET' && pathname === '/api/session') return send(res, 200, { user: publicUser(current), settings: { ...Object.fromEntries(all('SELECT key, value FROM settings').map(x => [x.key, x.value])), demo_mode: String(config.seedDemoData) } });
   if (method === 'POST' && pathname === '/api/auth/logout') { if (current) activity(current.id, 'logout', 'Signed out'); clearSession(req, res); return send(res, 200, { ok: true }); }
   if (method === 'POST' && pathname === '/api/auth/login') {
     const data = await body(req); const email = cleanText(data.email, 254).toLowerCase(); const password = String(data.password || '');
     const user = one('SELECT * FROM users WHERE email = ?', email);
-    if (!user || !user.is_active || !verifyPassword(password, user.password_hash)) return fail(res, 401, 'Incorrect email or password.');
+    if (!user || !user.is_active || !validPassword(password) || !verifyPassword(password, user.password_hash)) return fail(res, 401, 'Incorrect email or password.');
     setSession(res, user.id); activity(user.id, 'login', 'Signed in'); return send(res, 200, { user: publicUser(user) });
   }
   if (method === 'POST' && pathname === '/api/auth/register') {
@@ -300,8 +420,8 @@ async function api(req, res, url) {
     const data = await body(req); const name = cleanText(data.name, 80); const email = cleanText(data.email, 254).toLowerCase(); const password = String(data.password || '');
     const role = ['contributor','explorer','user'].includes(data.role) ? data.role : 'user';
     if (name.length < 2) return fail(res, 400, 'Please enter your name.');
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return fail(res, 400, 'Please enter a valid email address.');
-    if (password.length < 8) return fail(res, 400, 'Password must contain at least 8 characters.');
+    if (!validEmail(email)) return fail(res, 400, 'Please enter a valid email address.');
+    if (!validPassword(password)) return fail(res, 400, 'Password must contain between 8 and 256 characters.');
     try {
       const stamp = now(); const result = run('INSERT INTO users (name,email,password_hash,role,created_at,updated_at) VALUES (?, ?, ?, ?, ?, ?)', name, email, hashPassword(password), role, stamp, stamp);
       const id = Number(result.lastInsertRowid); const user = one('SELECT * FROM users WHERE id = ?', id); setSession(res, id); activity(id, 'register', `Joined as ${role}`); return send(res, 201, { user: publicUser(user) });
@@ -311,10 +431,17 @@ async function api(req, res, url) {
   if (method === 'GET' && pathname === '/api/profile') { const user = requireUser(req, res); if (user) return send(res, 200, { user: publicUser(user) }); return; }
   if (method === 'PUT' && pathname === '/api/profile') {
     const user = requireUser(req, res); if (!user) return; const data = await body(req);
-    const name = cleanText(data.name, 80); const email = cleanText(data.email, 254).toLowerCase(); const bio = cleanText(data.bio, 600); const avatar = cleanText(data.avatar_url, 2000); const preferences = typeof data.preferences === 'object' ? data.preferences : safeJson(user.preferences);
+    const name = cleanText(data.name, 80); const email = cleanText(data.email, 254).toLowerCase(); const bio = cleanText(data.bio, 600); const preferences = validatePreferences(data.preferences, safeJson(user.preferences));
+    let avatar;
+    try { avatar = cleanUrl(data.avatar_url, 'Avatar URL'); } catch (error) { return fail(res, error.status || 400, error.message); }
     if (name.length < 2) return fail(res, 400, 'Please enter your name.');
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return fail(res, 400, 'Please enter a valid email address.');
-    if (data.new_password) { if (String(data.new_password).length < 8) return fail(res, 400, 'New password must contain at least 8 characters.'); run('UPDATE users SET password_hash = ?, updated_at = ? WHERE id = ?', hashPassword(String(data.new_password)), now(), user.id); }
+    if (!validEmail(email)) return fail(res, 400, 'Please enter a valid email address.');
+    if (data.new_password) {
+      if (!validPassword(String(data.new_password))) return fail(res, 400, 'New password must contain between 8 and 256 characters.');
+      run('UPDATE users SET password_hash = ?, updated_at = ? WHERE id = ?', hashPassword(String(data.new_password)), now(), user.id);
+      run('DELETE FROM sessions WHERE user_id = ?', user.id);
+      setSession(res, user.id);
+    }
     try { run('UPDATE users SET name = ?, email = ?, bio = ?, avatar_url = ?, preferences = ?, updated_at = ? WHERE id = ?', name, email, bio, avatar, JSON.stringify(preferences), now(), user.id); }
     catch { return fail(res, 409, 'That email is already in use.'); }
     activity(user.id, 'profile_updated', 'Updated profile'); return send(res, 200, { user: publicUser(one('SELECT * FROM users WHERE id = ?', user.id)) });
@@ -335,8 +462,12 @@ async function api(req, res, url) {
     if (time === 'under_30') where.push('(r.prep_minutes + r.cook_minutes) <= 30');
     if (time === 'under_60') where.push('(r.prep_minutes + r.cook_minutes) > 30 AND (r.prep_minutes + r.cook_minutes) <= 60');
     if (time === 'slow') where.push('(r.prep_minutes + r.cook_minutes) > 60');
-    const recipes = all(`SELECT r.* FROM recipes r ${where.length ? 'WHERE ' + where.join(' AND ') : ''} ORDER BY r.created_at DESC`, ...values).map(r => recipeShape(r, current?.id));
-    return send(res, 200, { recipes });
+    const limit = boundedInteger(url.searchParams.get('limit'), mine ? 100 : 24, 1, 100);
+    const offset = boundedInteger(url.searchParams.get('offset'), 0, 0, 10000);
+    const whereClause = where.length ? `WHERE ${where.join(' AND ')}` : '';
+    const total = Number(one(`SELECT COUNT(*) AS count FROM recipes r ${whereClause}`, ...values).count);
+    const recipes = all(`SELECT r.* FROM recipes r ${whereClause} ORDER BY r.created_at DESC LIMIT ? OFFSET ?`, ...values, limit, offset).map(r => recipeShape(r, current?.id));
+    return send(res, 200, { recipes, pagination: { total, limit, offset, has_more: offset + recipes.length < total } });
   }
   if (method === 'POST' && pathname === '/api/recipes') {
     const user = requireUser(req, res); if (!user) return; if (!canContribute(user)) return fail(res, 403, 'Your current role can browse recipes but cannot submit one.');
@@ -367,13 +498,13 @@ async function api(req, res, url) {
     }
     if (!action && method === 'DELETE') { const user = requireUser(req,res); if (!user) return; if (!isOwner) return fail(res,403,'Only the recipe owner can delete it.'); run('DELETE FROM recipes WHERE id=?',recipeId); activity(user.id,'recipe_deleted',recipe.title); return send(res,200,{ok:true}); }
     if (action === 'save' && method === 'POST') { const user=requireUser(req,res); if(!user)return; if(recipe.status !== 'approved') return fail(res,400,'Only approved recipes can be saved.'); const exists=one('SELECT 1 FROM saved_recipes WHERE user_id=? AND recipe_id=?',user.id,recipeId); if(exists) {run('DELETE FROM saved_recipes WHERE user_id=? AND recipe_id=?',user.id,recipeId); return send(res,200,{saved:false});} run('INSERT INTO saved_recipes (user_id,recipe_id,created_at) VALUES (?, ?, ?)',user.id,recipeId,now()); activity(user.id,'recipe_saved',recipe.title); return send(res,200,{saved:true}); }
-    if (action === 'reviews' && method === 'POST') { const user=requireUser(req,res); if(!user)return; if(recipe.status !== 'approved') return fail(res,400,'Reviews are available once a recipe is approved.'); const data=await body(req); const rating=Math.round(Number(data.rating)); const comment=cleanText(data.comment,1000); if(rating<1||rating>5)return fail(res,400,'Choose a rating between 1 and 5.'); const stamp=now(); run(`INSERT INTO reviews (user_id,recipe_id,rating,comment,created_at,updated_at) VALUES (?, ?, ?, ?, ?, ?)
+    if (action === 'reviews' && method === 'POST') { const user=requireUser(req,res); if(!user)return; if(recipe.status !== 'approved') return fail(res,400,'Reviews are available once a recipe is approved.'); if(recipe.user_id === user.id) return fail(res,400,'You cannot review your own recipe.'); const data=await body(req); const rating=Math.round(Number(data.rating)); const comment=cleanText(data.comment,1000); if(rating<1||rating>5)return fail(res,400,'Choose a rating between 1 and 5.'); const stamp=now(); run(`INSERT INTO reviews (user_id,recipe_id,rating,comment,created_at,updated_at) VALUES (?, ?, ?, ?, ?, ?)
       ON CONFLICT(user_id,recipe_id) DO UPDATE SET rating=excluded.rating, comment=excluded.comment, updated_at=excluded.updated_at`,user.id,recipeId,rating,comment,stamp,stamp); activity(user.id,'review_saved',recipe.title); return send(res,200,{ok:true}); }
   }
 
   if (method === 'GET' && pathname === '/api/collection') { const user=requireUser(req,res); if(!user)return; const recipes=all('SELECT r.* FROM saved_recipes s JOIN recipes r ON r.id=s.recipe_id WHERE s.user_id=? ORDER BY s.created_at DESC',user.id).map(r=>recipeShape(r,user.id)); return send(res,200,{recipes}); }
   if (method === 'GET' && pathname === '/api/users') { const user=requireUser(req,res); if(!user)return; const users=all('SELECT id,name,role,bio,avatar_url FROM users WHERE id != ? AND is_active=1 ORDER BY name',user.id); return send(res,200,{users}); }
-  if (method === 'GET' && pathname === '/api/messages') { const user=requireUser(req,res); if(!user)return; run('UPDATE messages SET is_read=1 WHERE recipient_id=?',user.id); const messages=all(`SELECT m.*, su.name AS sender_name, ru.name AS recipient_name FROM messages m JOIN users su ON su.id=m.sender_id JOIN users ru ON ru.id=m.recipient_id WHERE m.sender_id=? OR m.recipient_id=? ORDER BY m.created_at ASC`,user.id,user.id); return send(res,200,{messages}); }
+  if (method === 'GET' && pathname === '/api/messages') { const user=requireUser(req,res); if(!user)return; if(url.searchParams.get('mark_read') === 'true') run('UPDATE messages SET is_read=1 WHERE recipient_id=?',user.id); const messages=all(`SELECT m.*, su.name AS sender_name, ru.name AS recipient_name FROM messages m JOIN users su ON su.id=m.sender_id JOIN users ru ON ru.id=m.recipient_id WHERE m.sender_id=? OR m.recipient_id=? ORDER BY m.created_at ASC LIMIT 500`,user.id,user.id); return send(res,200,{messages}); }
   if (method === 'POST' && pathname === '/api/messages') { const user=requireUser(req,res); if(!user)return; const data=await body(req); const recipientId=Number(data.recipient_id); const content=cleanText(data.content,2000); if(!recipientId||recipientId===user.id||!content)return fail(res,400,'Choose a recipient and write a message.'); const recipient=one('SELECT id,name FROM users WHERE id=? AND is_active=1',recipientId); if(!recipient)return fail(res,404,'Recipient not found.'); const result=run('INSERT INTO messages (sender_id,recipient_id,content,created_at) VALUES (?, ?, ?, ?)',user.id,recipientId,content,now()); activity(user.id,'message_sent',`Message to ${recipient.name}`); return send(res,201,{message:one(`SELECT m.*, ? AS sender_name, ? AS recipient_name FROM messages m WHERE m.id=?`,user.name,recipient.name,Number(result.lastInsertRowid))}); }
 
   if (pathname.startsWith('/api/admin')) {
@@ -381,30 +512,104 @@ async function api(req, res, url) {
     if(method==='GET' && pathname==='/api/admin/overview') { const stats={users:one('SELECT COUNT(*) AS n FROM users WHERE is_active=1').n, recipes:one('SELECT COUNT(*) AS n FROM recipes').n, pending:one("SELECT COUNT(*) AS n FROM recipes WHERE status='pending'").n, reviews:one('SELECT COUNT(*) AS n FROM reviews').n, views:one('SELECT COALESCE(SUM(views),0) AS n FROM recipes').n}; const trends=all("SELECT substr(created_at,1,10) AS day, COUNT(*) AS count FROM recipes WHERE created_at >= date('now','-6 days') GROUP BY day ORDER BY day"); return send(res,200,{stats,trends,activities:all('SELECT a.*,u.name FROM activities a LEFT JOIN users u ON u.id=a.user_id ORDER BY a.created_at DESC LIMIT 10')}); }
     if(method==='GET' && pathname==='/api/admin/users') { return send(res,200,{users:all('SELECT id,name,email,role,is_active,created_at FROM users ORDER BY created_at DESC')}); }
     const userMatch=pathname.match(/^\/api\/admin\/users\/(\d+)$/);
-    if(userMatch && method==='PUT') { const id=Number(userMatch[1]); const data=await body(req); const target=one('SELECT * FROM users WHERE id=?',id); if(!target)return fail(res,404,'User not found.'); if(target.id===user.id && data.is_active===false)return fail(res,400,'You cannot deactivate your own account.'); const name=cleanText(data.name,80)||target.name; const email=cleanText(data.email,254).toLowerCase()||target.email; const role=['admin','contributor','explorer','user'].includes(data.role)?data.role:target.role; try {run('UPDATE users SET name=?,email=?,role=?,is_active=?,updated_at=? WHERE id=?',name,email,role,data.is_active===false?0:1,now(),id);} catch{return fail(res,409,'That email is already in use.');} activity(user.id,'user_updated',name); return send(res,200,{ok:true}); }
-    if(userMatch && method==='DELETE') { const id=Number(userMatch[1]); if(id===user.id)return fail(res,400,'You cannot delete your own account.'); const target=one('SELECT name FROM users WHERE id=?',id); if(!target)return fail(res,404,'User not found.'); run('DELETE FROM users WHERE id=?',id); activity(user.id,'user_deleted',target.name); return send(res,200,{ok:true}); }
+    if(userMatch && method==='PUT') { const id=Number(userMatch[1]); const data=await body(req); const target=one('SELECT * FROM users WHERE id=?',id); if(!target)return fail(res,404,'User not found.'); const name=cleanText(data.name,80)||target.name; const email=cleanText(data.email,254).toLowerCase()||target.email; const role=['admin','contributor','explorer','user'].includes(data.role)?data.role:target.role; const isActive=data.is_active===false?0:1; if(name.length<2)return fail(res,400,'Name must contain at least 2 characters.'); if(!validEmail(email))return fail(res,400,'Please enter a valid email address.'); if(target.id===user.id && !isActive)return fail(res,400,'You cannot deactivate your own account.'); if(wouldRemoveLastActiveAdmin(target,role,Boolean(isActive)))return fail(res,400,'Keep at least one active administrator on the platform.'); try {run('UPDATE users SET name=?,email=?,role=?,is_active=?,updated_at=? WHERE id=?',name,email,role,isActive,now(),id); if(!isActive)run('DELETE FROM sessions WHERE user_id=?',id);} catch{return fail(res,409,'That email is already in use.');} activity(user.id,'user_updated',name); return send(res,200,{ok:true}); }
+    if(userMatch && method==='DELETE') { const id=Number(userMatch[1]); if(id===user.id)return fail(res,400,'You cannot delete your own account.'); const target=one('SELECT * FROM users WHERE id=?',id); if(!target)return fail(res,404,'User not found.'); if(wouldRemoveLastActiveAdmin(target,'user',false))return fail(res,400,'Keep at least one active administrator on the platform.'); run('DELETE FROM users WHERE id=?',id); activity(user.id,'user_deleted',target.name); return send(res,200,{ok:true}); }
     if(method==='GET' && pathname==='/api/admin/recipes') return send(res,200,{recipes:all('SELECT * FROM recipes ORDER BY created_at DESC').map(r=>recipeShape(r,user.id))});
     const moderationMatch=pathname.match(/^\/api\/admin\/recipes\/(\d+)\/status$/);
     if(moderationMatch && method==='POST') { const recipeId=Number(moderationMatch[1]); const data=await body(req); if(!['approved','rejected','pending'].includes(data.status))return fail(res,400,'Invalid status.'); const recipe=one('SELECT * FROM recipes WHERE id=?',recipeId); if(!recipe)return fail(res,404,'Recipe not found.'); run('UPDATE recipes SET status=?,rejection_note=?,updated_at=? WHERE id=?',data.status,cleanText(data.note,500),now(),recipeId); activity(user.id,'recipe_moderated',`${recipe.title}: ${data.status}`); return send(res,200,{ok:true}); }
     if(method==='GET' && pathname==='/api/admin/settings') return send(res,200,{settings:Object.fromEntries(all('SELECT key,value FROM settings').map(x=>[x.key,x.value]))});
-    if(method==='PUT' && pathname==='/api/admin/settings') { const data=await body(req); for(const key of ['platform_name','allow_registration','moderation_mode']) {if(data[key]!==undefined)run('UPDATE settings SET value=?,updated_at=? WHERE key=?',cleanText(data[key],100),now(),key);} activity(user.id,'settings_updated','Updated platform settings'); return send(res,200,{ok:true}); }
+    if(method==='PUT' && pathname==='/api/admin/settings') { const data=await body(req); const next={platform_name:data.platform_name===undefined?null:cleanText(data.platform_name,100),allow_registration:data.allow_registration,moderation_mode:data.moderation_mode}; if(next.platform_name!==null&&!next.platform_name)return fail(res,400,'Platform name cannot be empty.'); if(next.allow_registration!==undefined&&!['true','false'].includes(next.allow_registration))return fail(res,400,'Invalid registration setting.'); if(next.moderation_mode!==undefined&&!['approval_required','open'].includes(next.moderation_mode))return fail(res,400,'Invalid moderation setting.'); for(const [key,value] of Object.entries(next)){if(value!==undefined&&value!==null)run('UPDATE settings SET value=?,updated_at=? WHERE key=?',value,now(),key);} activity(user.id,'settings_updated','Updated platform settings'); return send(res,200,{ok:true}); }
   }
   return fail(res,404,'This action could not be found.');
 }
 
-const MIMES = { '.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.js':'application/javascript; charset=utf-8','.svg':'image/svg+xml','.png':'image/png','.ico':'image/x-icon' };
+function applySecurityHeaders(res) {
+  const policy = [
+    "default-src 'self'",
+    "base-uri 'self'",
+    "object-src 'none'",
+    "frame-ancestors 'none'",
+    "form-action 'self'",
+    "script-src 'self'",
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+    "font-src 'self' https://fonts.gstatic.com data:",
+    "img-src 'self' https: data:",
+    "connect-src 'self'",
+  ];
+  if (config.secureCookies) policy.push('upgrade-insecure-requests');
+  res.setHeader('Content-Security-Policy', policy.join('; '));
+  res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
+  res.setHeader('Cross-Origin-Resource-Policy', 'same-origin');
+  res.setHeader('Permissions-Policy', 'camera=(), geolocation=(), microphone=(), payment=()');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'DENY');
+  if (config.secureCookies) res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+}
+function expectedOrigin(req) {
+  if (config.appOrigin) return config.appOrigin;
+  const host = String(req.headers.host || '').toLowerCase();
+  if (!host || /[\s/\\]/.test(host)) return '';
+  const proto = config.trustProxy && String(req.headers['x-forwarded-proto']).split(',')[0].trim() === 'https' ? 'https' : 'http';
+  return `${proto}://${host}`;
+}
+function hasTrustedOrigin(req) {
+  const origin = String(req.headers.origin || '').replace(/\/$/, '');
+  if (!origin) return !isProduction;
+  return origin === expectedOrigin(req);
+}
+function isUnsafeMethod(method) { return ['POST', 'PUT', 'PATCH', 'DELETE'].includes(method); }
+
+const MIMES = { '.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.js':'application/javascript; charset=utf-8','.svg':'image/svg+xml','.png':'image/png','.ico':'image/x-icon','.webmanifest':'application/manifest+json; charset=utf-8' };
 function serveStatic(req,res,url) {
-  const requested = url.pathname === '/' ? 'index.html' : url.pathname.replace(/^\/+/, '');
+  if (!['GET', 'HEAD'].includes(req.method)) return fail(res, 405, 'Method not allowed.');
+  let requested;
+  try { requested = url.pathname === '/' ? 'index.html' : decodeURIComponent(url.pathname.replace(/^\/+/, '')); }
+  catch { return fail(res, 400, 'Invalid path.'); }
   const file = path.resolve(PUBLIC_DIR, requested);
   if (!file.startsWith(PUBLIC_DIR + path.sep) && file !== path.join(PUBLIC_DIR,'index.html')) return fail(res,403,'Forbidden');
   fs.readFile(file, (error, content) => {
-    if (error) { if (url.pathname !== '/') return fs.readFile(path.join(PUBLIC_DIR,'index.html'), (fallbackError, fallback) => fallbackError ? fail(res,404,'Page not found.') : (res.writeHead(200,{'Content-Type':MIMES['.html']}),res.end(fallback))); return fail(res,404,'Page not found.'); }
-    res.writeHead(200, {'Content-Type': MIMES[path.extname(file)] || 'application/octet-stream'}); res.end(content);
+    if (error) return fail(res,404,'Page not found.');
+    const extension = path.extname(file).toLowerCase();
+    res.writeHead(200, { 'Content-Type': MIMES[extension] || 'application/octet-stream', 'Cache-Control': extension === '.html' ? 'no-store' : 'public, max-age=300, must-revalidate' });
+    if (req.method === 'HEAD') return res.end();
+    res.end(content);
   });
 }
 const server = http.createServer(async (req,res) => {
-  const url = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
-  try { if (url.pathname.startsWith('/api/')) return await api(req,res,url); return serveStatic(req,res,url); }
-  catch (error) { console.error(error); if (!res.headersSent) return fail(res,500,'Something went wrong. Please try again.'); res.end(); }
+  const requestId = crypto.randomUUID();
+  const startedAt = Date.now();
+  res.setHeader('X-Request-Id', requestId);
+  applySecurityHeaders(res);
+  res.on('finish', () => console.info(JSON.stringify({ level: 'info', requestId, method: req.method, path: req.url?.split('?')[0], status: res.statusCode, duration_ms: Date.now() - startedAt })));
+  let url;
+  try { url = new URL(req.url, `http://${req.headers.host || 'localhost'}`); }
+  catch { return fail(res, 400, 'Invalid request URL.'); }
+  try {
+    if (req.method === 'GET' && url.pathname === '/healthz') return send(res, 200, { status: 'ok' });
+    if (url.pathname.startsWith('/api/')) {
+      if (isUnsafeMethod(req.method) && !hasTrustedOrigin(req)) return fail(res, 403, 'Request origin is not allowed.');
+      if (url.pathname.startsWith('/api/auth/') && !enforceRateLimit(req, res, 'auth')) return;
+      if (isUnsafeMethod(req.method) && !enforceRateLimit(req, res, 'mutation')) return;
+      return await api(req,res,url);
+    }
+    return serveStatic(req,res,url);
+  } catch (error) {
+    const status = error instanceof HttpError ? error.status : 500;
+    console.error(JSON.stringify({ level: 'error', requestId, method: req.method, path: url.pathname, status, message: error.message, stack: isProduction ? undefined : error.stack }));
+    if (!res.headersSent) return fail(res, status, status < 500 ? error.message : 'Something went wrong. Please try again.');
+    res.end();
+  }
 });
-server.listen(PORT, '127.0.0.1', () => console.log(`Recipely is running at http://127.0.0.1:${PORT}`));
+server.requestTimeout = 15_000;
+server.headersTimeout = 10_000;
+server.keepAliveTimeout = 5_000;
+server.on('error', error => { console.error(`Unable to start Recipely: ${error.message}`); process.exitCode = 1; });
+server.listen(PORT, config.host, () => console.log(`Recipely is running at http://${config.host}:${PORT} (${config.environment})`));
+function shutdown(signal) {
+  console.info(`Received ${signal}; shutting down Recipely.`);
+  server.close(() => { db.close(); process.exit(0); });
+  setTimeout(() => process.exit(1), 10_000).unref();
+}
+process.once('SIGINT', () => shutdown('SIGINT'));
+process.once('SIGTERM', () => shutdown('SIGTERM'));
