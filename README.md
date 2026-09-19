@@ -10,6 +10,20 @@ Recipely is a complete local web app with a frontend, backend API, and persisten
 
 The first launch creates `data/recipely.db`, which permanently stores local accounts, recipes, reviews, collections, messages, and settings.
 
+## Production launch
+
+Use Node.js 22 or newer. Production mode disables demo seeding and requires a first administrator:
+
+```powershell
+$env:NODE_ENV = 'production'
+$env:APP_ORIGIN = 'https://recipes.example.com'
+$env:ADMIN_EMAIL = 'admin@example.com'
+$env:ADMIN_PASSWORD = 'use-a-unique-password-at-least-12-characters'
+node server.js
+```
+
+Set `COOKIE_SECURE=true` when serving over HTTPS. If TLS is terminated by a trusted reverse proxy, set `TRUST_PROXY=true`; otherwise leave it disabled. The `/healthz` endpoint can be used for process checks. Keep the `data` directory on persistent storage and back it up using a SQLite-aware process.
+
 ## Demo accounts
 
 | Role | Email | Password |

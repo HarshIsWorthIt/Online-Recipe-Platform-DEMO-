@@ -301,6 +301,11 @@ class HttpError extends Error {
 
 const RATE_WINDOWS = { auth: { max: 10, ms: 15 * 60 * 1000 }, mutation: { max: 120, ms: 60 * 1000 } };
 const rateBuckets = new Map();
+const rateLimitCleanup = setInterval(() => {
+  const timestamp = Date.now();
+  for (const [key, bucket] of rateBuckets) if (bucket.resetAt <= timestamp) rateBuckets.delete(key);
+}, 15 * 60 * 1000);
+rateLimitCleanup.unref();
 function clientIp(req) {
   if (config.trustProxy) return String(req.headers['x-forwarded-for'] || '').split(',')[0].trim() || 'unknown';
   return req.socket.remoteAddress || 'unknown';
@@ -371,8 +376,9 @@ async function body(req) {
     let settled = false;
     const rejectOnce = error => { if (!settled) { settled = true; reject(error); } };
     req.on('data', chunk => {
+      if (settled) return;
       size += chunk.length;
-      if (size > 1024 * 1024) return rejectOnce(new HttpError(413, 'Request is too large.'));
+      if (size > 1024 * 1024) { rejectOnce(new HttpError(413, 'Request is too large.')); req.resume(); return; }
       chunks.push(chunk);
     });
     req.on('end', () => {
@@ -391,10 +397,15 @@ function validateRecipe(data) {
   if (title.length < 3) throw new Error('Recipe title must be at least 3 characters.');
   if (ingredients.length < 1) throw new Error('Add at least one ingredient.');
   if (instructions.length < 1) throw new Error('Add at least one cooking step.');
+  const categories = ['Breakfast', 'Lunch', 'Dinner', 'Dessert', 'Snack', 'Drink', 'Other'];
+  const tastes = ['Aromatic & spicy', 'Bold & spicy', 'Bright & tangy', 'Creamy & comforting', 'Deeply savoury', 'Earthy & wholesome', 'Fresh & herby', 'Sweet & fruity', 'Warm & spiced'];
+  const category = cleanText(data.category, 50) || 'Other';
+  const taste = cleanText(data.taste, 50);
+  if (!categories.includes(category)) throw new Error('Choose a valid recipe category.');
+  if (taste && !tastes.includes(taste)) throw new Error('Choose a valid flavour profile.');
   return {
     title, description, ingredients: JSON.stringify(ingredients), instructions: JSON.stringify(instructions),
-    category: cleanText(data.category, 50) || 'Other', cuisine: cleanText(data.cuisine, 50),
-    nation: cleanText(data.nation, 50), taste: cleanText(data.taste, 50),
+    category, cuisine: cleanText(data.cuisine, 50), nation: cleanText(data.nation, 50), taste,
     prep_minutes: boundedInteger(data.prep_minutes, 0, 0, 1440),
     cook_minutes: boundedInteger(data.cook_minutes, 0, 0, 1440),
     servings: boundedInteger(data.servings, 2, 1, 100),

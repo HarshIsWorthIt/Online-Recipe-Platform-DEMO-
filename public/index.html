@@ -11,16 +11,18 @@
     <link rel="stylesheet" href="/styles.css" />
   </head>
   <body>
+    <a class="skip-link" href="#app">Skip to content</a>
     <div class="live-background" aria-hidden="true"><span class="background-orb orb-one"></span><span class="background-orb orb-two"></span><span class="background-orb orb-three"></span><i class="floating-seed seed-one"></i><i class="floating-seed seed-two"></i><i class="floating-seed seed-three"></i><i class="floating-seed seed-four"></i></div>
-    <header class="topbar">
+    <header class="topbar" role="banner">
       <a class="brand" href="#home" aria-label="Recipely home"><span class="brand-mark">R</span><span>recipely</span></a>
-      <nav class="topnav" id="topnav"><a href="#discover">Discover</a><a href="#about">How it works</a></nav>
-      <div id="account-actions"></div>
+      <nav class="topnav" id="topnav" aria-label="Primary navigation"><a href="#discover">Discover</a><a href="#about">How it works</a></nav>
+      <div id="account-actions" aria-label="Account actions"></div>
     </header>
     <main id="app" tabindex="-1"></main>
     <div id="toast-region" class="toast-region" aria-live="polite" aria-atomic="true"></div>
     <div id="modal-root"></div>
-    <footer class="site-footer"><span>Made for local cooking communities.</span><span>© <span id="year"></span> Recipely</span></footer>
+    <footer class="site-footer" role="contentinfo"><span>Made for local cooking communities.</span><span>© <span id="year"></span> Recipely</span></footer>
+    <noscript><p class="noscript-message">Recipely needs JavaScript enabled to browse and share recipes.</p></noscript>
     <script src="/app.js" defer></script>
   </body>
 </html>

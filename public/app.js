@@ -25,7 +25,11 @@ function toast(message, kind = '') { const node = document.createElement('div');
 function statusPill(status) { return `<span class="status-pill ${escapeHtml(status)}">${escapeHtml(status)}</span>`; }
 function empty(icon, title, copy, action = '') { return `<div class="empty"><span class="empty-icon">${icon}</span><strong>${escapeHtml(title)}</strong><p>${escapeHtml(copy)}</p>${action}</div>`; }
 function stat(label, value) { return `<div class="stat"><span class="stat-label">${escapeHtml(label)}</span><strong>${value}</strong></div>`; }
-function setLoading() { app.innerHTML = '<div class="loading">Preparing something delicious…</div>'; }
+function setLoading() { app.innerHTML = '<div class="loading" role="status" aria-live="polite">Preparing something delicious…</div>'; }
+window.addEventListener('unhandledrejection', event => {
+  event.preventDefault();
+  toast('Something went wrong. Please try again.', 'error');
+});
 
 async function api(path, options = {}) {
   const controller = options.signal ? null : new AbortController();
